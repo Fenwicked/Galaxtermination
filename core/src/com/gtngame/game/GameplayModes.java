@@ -25,7 +25,8 @@ public class GameplayModes {
 
             }, 1);
         }
-        al.batch.draw(al.dbgGameplay,10,10);
+        al.font.draw(al.batch, "GAMEPLAY",100,vl.windowHeight - 100);
+        //al.batch.draw(al.dbgGameplay,10,10);
         al.batch.end();
     }
 
@@ -43,7 +44,8 @@ public class GameplayModes {
 
             }, 1);
         }
-        al.batch.draw(al.dbgPaused,10,10);
+        al.font.draw(al.batch, "PAUSED",100,vl.windowHeight - 100);
+        //al.batch.draw(al.dbgPaused,10,10);
         al.batch.end();
     }
 
@@ -61,7 +63,8 @@ public class GameplayModes {
 
             }, 1);
         }
-        al.batch.draw(al.dbgGameOver,10,10);
+        al.font.draw(al.batch, "GAME OVER",100,vl.windowHeight - 100);
+        //al.batch.draw(al.dbgGameOver,10,10);
         al.batch.end();
     }
 }

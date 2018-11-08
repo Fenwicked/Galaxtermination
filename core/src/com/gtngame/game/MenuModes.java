@@ -35,7 +35,8 @@ public class MenuModes {
                 }, 6);
             }
         }
-        al.batch.draw(al.dbgSplash,10,10);
+        al.font.draw(al.batch, "SPLASH",100,vl.windowHeight - 100);
+        //al.batch.draw(al.dbgSplash,10,10);
         al.batch.end();
     }
 
@@ -53,7 +54,8 @@ public class MenuModes {
 
             }, 1);
         }
-        al.batch.draw(al.dbgCredits,10,10);
+        al.font.draw(al.batch, "CREDITS",100,vl.windowHeight - 100);
+        //al.batch.draw(al.dbgCredits,10,10);
         al.batch.end();
     }
 
@@ -71,7 +73,8 @@ public class MenuModes {
 
             }, 1);
         }
-        al.batch.draw(al.dbgMM,10,10);
+        al.font.draw(al.batch, "MAIN MENU",100,vl.windowHeight - 100);
+        //al.batch.draw(al.dbgMM,10,10);
         al.batch.end();
     }
 
@@ -89,7 +92,8 @@ public class MenuModes {
 
             }, 1);
         }
-        al.batch.draw(al.dbgSettings,10,10);
+        al.font.draw(al.batch, "SETTINGS",100,vl.windowHeight - 100);
+        //al.batch.draw(al.dbgSettings,10,10);
         al.batch.end();
     }
 }
