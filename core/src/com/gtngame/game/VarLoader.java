@@ -9,6 +9,7 @@ public class VarLoader {
     public HashMap<String, Integer> gameModeMap = new HashMap<String, Integer>();
     public Integer gameMode;
     public Boolean debugMode;
+    public Boolean gameplayInitialized;
     public Integer windowWidth, windowHeight;
 
     public void load () {
@@ -31,5 +32,6 @@ public class VarLoader {
 		} */
         gameMode = gameModeMap.get("Splash");
         debugMode = true;
+        gameplayInitialized = false;
     }
 }

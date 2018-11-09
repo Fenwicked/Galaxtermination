@@ -30,7 +30,9 @@ public class gtnGame extends ApplicationAdapter {
 	public void render () {
 		//called each frame, use as main loop
 		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
 		switch (vl.gameMode) {
 			case 1: //SplashLoading
 				mm.modeSplash();

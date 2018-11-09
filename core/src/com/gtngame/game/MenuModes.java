@@ -23,19 +23,19 @@ public class MenuModes {
             //gameMode = gameModeMap.get("Splash");
             al.splashSprite.draw(al.batch, 1);
             if (Timer.instance().isEmpty()) {
-                System.out.println("Scheduling!");
+                //System.out.println("Scheduling!");
                 Timer.schedule(new Timer.Task() {
                     @Override
                     public void run() {
                         vl.gameMode = vl.gameModeMap.get("MainMenu");
-                        System.out.println("Clearing timer");
+                        //System.out.println("Clearing timer");
                         Timer.instance().clear();
                     }
 
                 }, 6);
             }
         }
-        al.font.draw(al.batch, "SPLASH",100,vl.windowHeight - 100);
+        if (vl.debugMode) al.font.draw(al.batch, "SPLASH",100,vl.windowHeight - 100);
         //al.batch.draw(al.dbgSplash,10,10);
         al.batch.end();
     }
@@ -43,18 +43,18 @@ public class MenuModes {
     public void modeCredits () {
         al.batch.begin();
         if (Timer.instance().isEmpty()) {
-            System.out.println("Scheduling!");
+            //System.out.println("Scheduling!");
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     vl.gameMode = vl.gameModeMap.get("Settings");
-                    System.out.println("Clearing timer");
+                    //System.out.println("Clearing timer");
                     Timer.instance().clear();
                 }
 
             }, 1);
         }
-        al.font.draw(al.batch, "CREDITS",100,vl.windowHeight - 100);
+        if (vl.debugMode) al.font.draw(al.batch, "CREDITS",100,vl.windowHeight - 100);
         //al.batch.draw(al.dbgCredits,10,10);
         al.batch.end();
     }
@@ -62,18 +62,18 @@ public class MenuModes {
     public void modeMainMenu () {
         al.batch.begin();
         if (Timer.instance().isEmpty()) {
-            System.out.println("Scheduling!");
+            //System.out.println("Scheduling!");
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     vl.gameMode = vl.gameModeMap.get("Credits");
-                    System.out.println("Clearing timer");
+                    //System.out.println("Clearing timer");
                     Timer.instance().clear();
                 }
 
             }, 1);
         }
-        al.font.draw(al.batch, "MAIN MENU",100,vl.windowHeight - 100);
+        if (vl.debugMode) al.font.draw(al.batch, "MAIN MENU",100,vl.windowHeight - 100);
         //al.batch.draw(al.dbgMM,10,10);
         al.batch.end();
     }
@@ -81,18 +81,18 @@ public class MenuModes {
     public void modeSettings () {
         al.batch.begin();
         if (Timer.instance().isEmpty()) {
-            System.out.println("Scheduling!");
+            //System.out.println("Scheduling!");
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     vl.gameMode = vl.gameModeMap.get("Gameplay");
-                    System.out.println("Clearing timer");
+                    //System.out.println("Clearing timer");
                     Timer.instance().clear();
                 }
 
             }, 1);
         }
-        al.font.draw(al.batch, "SETTINGS",100,vl.windowHeight - 100);
+        if (vl.debugMode) al.font.draw(al.batch, "SETTINGS",100,vl.windowHeight - 100);
         //al.batch.draw(al.dbgSettings,10,10);
         al.batch.end();
     }
