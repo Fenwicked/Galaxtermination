@@ -32,7 +32,7 @@ public class MenuModes {
                         Timer.instance().clear();
                     }
 
-                }, 6);
+                }, 1);
             }
         }
         if (vl.debugMode) al.font.draw(al.batch, "SPLASH",100,vl.windowHeight - 100);

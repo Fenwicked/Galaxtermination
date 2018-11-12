@@ -30,7 +30,7 @@ public class VarLoader {
 			Integer a = gameModeMap.get("Gameplay");
 			System.out.println("value for key Gameplay is:- " + a);
 		} */
-        gameMode = gameModeMap.get("Splash");
+        gameMode = gameModeMap.get("Gameplay");
         debugMode = true;
         gameplayInitialized = false;
     }

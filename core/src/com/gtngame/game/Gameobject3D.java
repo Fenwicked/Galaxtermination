@@ -2,15 +2,17 @@ package com.gtngame.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 
-abstract public class Gameobject3D extends Gameobject2D{
-    public int sizeZ;
-    public int posZ;
-    public float motionZ;
+public class Gameobject3D extends Gameobject2D{
+    public int sizeY;
+    public int posY;
+    public float motionY;
     public float pitch, roll;
     public float pitchSpeed, rollSpeed;
 
-    public Gameobject3D(){
+    public Gameobject3D(Decal myDecal){
+        this.myDecal = myDecal;
     }
 
     final public void turnPitch(){
@@ -27,8 +29,8 @@ abstract public class Gameobject3D extends Gameobject2D{
         turnRoll();
     }
 
-    final public void moveZ(){
-        this.posZ += this.motionZ;
+    final public void moveY(){
+        this.posY += this.motionY;
     }
 
     @Override

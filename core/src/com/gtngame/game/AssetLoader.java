@@ -1,25 +1,30 @@
 package com.gtngame.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.graphics.g3d.decals.GroupStrategy;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Array;
 
 public class AssetLoader {
     public SpriteBatch batch;
     public Sprite splashSprite;
-    public Texture splashImg;//, debugModesTxr;
-    //public TextureRegion dbgSplash, dbgCredits, dbgMM, dbgSettings, dbgGameplay, dbgPaused, dbgGameOver;
+    public Array<Sprite> sprites;
+    public Texture splashImg, starFieldImg, playerShipImg;
+    public TextureRegion playerShipReg, starFieldReg;//dbgSplash, dbgCredits, dbgMM, dbgSettings, dbgGameplay, dbgPaused, dbgGameOver;
     public Float splashTimer;
     public VarLoader vl;
     public BitmapFont font;
@@ -34,6 +39,10 @@ public class AssetLoader {
     public Material planeMaterial;
     //public Array<Model> models;
     public Array<ModelInstance> modelInstances;
+    public Decal floorDecal, shipDecal;
+    public Array<Decal> Decals;
+    public DecalBatch decalBatch;
+    public GroupStrategy strategy;
 
     public AssetLoader (VarLoader vl){
         this.vl = vl;
@@ -47,6 +56,13 @@ public class AssetLoader {
         //splashSprite.setPosition(Gdx.graphics.getDisplayMode().width / 2 - splashImg.getWidth() / 2, Gdx.graphics.getDisplayMode().height / 2 - splashImg.getHeight() / 2);
         splashSprite.setPosition(vl.windowWidth / 2 - splashImg.getWidth() / 2, vl.windowHeight / 2 - splashImg.getHeight() / 2);
         splashTimer = 0f;
+        starFieldImg = new Texture("starfield.png");
+        starFieldImg.setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+        starFieldReg = new TextureRegion(starFieldImg);
+        starFieldReg.setRegion(0,0,starFieldImg.getWidth()*10,starFieldImg.getHeight()*10);
+
+        playerShipImg = new Texture("playership.png");
+        playerShipReg = new TextureRegion(playerShipImg, 0, 0, 32, 32);
         /*debugModesTxr = new Texture("debugtitles.png");
         dbgSplash = new TextureRegion(debugModesTxr, 0, 0, 69, 13);
         dbgCredits = new TextureRegion(debugModesTxr, 0, 13, 69, 10);
@@ -85,35 +101,48 @@ public class AssetLoader {
         env.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
         modelBatch = new ModelBatch();
         cam = new PerspectiveCamera(67, vl.windowWidth, vl.windowHeight);
-        cam.position.set(10f, 10f, 10f);
-        cam.lookAt(0,0,0);
+        cam.position.set(3f, 20, 0f);
+        cam.lookAt(-8,0,0);
         cam.near = 1f;
         cam.far = 300f;
         cam.update();
-        camController = new CameraInputController(cam);
+        //camController = new CameraInputController(cam);
         Gdx.input.setInputProcessor(camController);
+        strategy = new CameraGroupStrategy(cam);
+        decalBatch = new DecalBatch(strategy);
     }
 
     public void buildModel(){
         //planeMaterial = new Material();
         modelInstances = new Array<ModelInstance>();
-        ModelBuilder modelBuilder = new ModelBuilder();
-        cubeModel = modelBuilder.createBox(4f, 4f, 4f,
-                new Material(ColorAttribute.createDiffuse(Color.GREEN)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        cubeInstance = new ModelInstance(cubeModel);
-        modelInstances.add(cubeInstance);
-        planeModel = modelBuilder.createLineGrid(100, 100, 10, 10, new Material(ColorAttribute.createDiffuse(Color.WHITE)), VertexAttributes.Usage.Position);
-        planeInstance = new ModelInstance(planeModel);
-        planeInstance.transform.setToTranslation(0,-2,0);
-        modelInstances.add(planeInstance);
+        Decals = new Array<Decal>();
+        //ModelBuilder modelBuilder = new ModelBuilder();
+        //cubeModel = modelBuilder.createBox(4f, 4f, 4f,
+        //        new Material(ColorAttribute.createDiffuse(Color.GREEN)),
+        //        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+        //cubeInstance = new ModelInstance(cubeModel);
+        //modelInstances.add(cubeInstance);
+
+        floorDecal = Decal.newDecal(starFieldReg.getRegionWidth()/4, starFieldReg.getRegionHeight()/4, starFieldReg, true);
+        floorDecal.setDimensions(1000, 1000);
+        floorDecal.setPosition(0, -2, 0);
+        floorDecal.setRotationX(-90);
+        Decals.add(floorDecal);
+
+        shipDecal = Decal.newDecal(playerShipReg.getRegionWidth()/8, playerShipReg.getRegionHeight()/8, playerShipReg, true);
+        //shipDecal.setDimensions(1000, 1000);
+        shipDecal.setPosition(0, -1.9f, 0);
+        shipDecal.rotateX(-90);
+        shipDecal.rotateZ(90);
+        Decals.add(shipDecal);
+
     }
 
     public void dispose () {
         batch.dispose();
         splashImg.dispose();
         modelBatch.dispose();
-        cubeModel.dispose();
+//        cubeModel.dispose();
         //debugModesTxr.dispose();
     }
 }
