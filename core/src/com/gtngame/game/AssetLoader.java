@@ -23,8 +23,8 @@ public class AssetLoader {
     public SpriteBatch batch;
     public Sprite splashSprite;
     public Array<Sprite> sprites;
-    public Texture splashImg, starFieldImg, playerShipImg;
-    public TextureRegion playerShipReg, starFieldReg;//dbgSplash, dbgCredits, dbgMM, dbgSettings, dbgGameplay, dbgPaused, dbgGameOver;
+    public Texture splashImg, starFieldImg, starFieldTrImg, playerShipImg;
+    public TextureRegion playerShipReg, starFieldReg, starFieldTrReg;//dbgSplash, dbgCredits, dbgMM, dbgSettings, dbgGameplay, dbgPaused, dbgGameOver;
     public Float splashTimer;
     public VarLoader vl;
     public BitmapFont font;
@@ -39,7 +39,7 @@ public class AssetLoader {
     public Material planeMaterial;
     //public Array<Model> models;
     public Array<ModelInstance> modelInstances;
-    public Decal floorDecal, shipDecal;
+    public Decal floorDecal, shipDecal, enemyDecal;
     public Array<Decal> Decals;
     public DecalBatch decalBatch;
     public GroupStrategy strategy;
@@ -59,7 +59,13 @@ public class AssetLoader {
         starFieldImg = new Texture("starfield.png");
         starFieldImg.setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
         starFieldReg = new TextureRegion(starFieldImg);
-        starFieldReg.setRegion(0,0,starFieldImg.getWidth()*10,starFieldImg.getHeight()*10);
+        starFieldReg.setRegion(0,0,starFieldImg.getWidth()*40,starFieldImg.getHeight()*40);
+
+        starFieldTrImg = new Texture("starfieldTr.png");
+        starFieldTrImg.setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+        starFieldTrReg = new TextureRegion(starFieldTrImg);
+        starFieldTrReg.setRegion(0,0,starFieldTrImg.getWidth()*40,starFieldTrImg.getHeight()*40);
+        starFieldTrReg.flip(true,true);
 
         playerShipImg = new Texture("playership.png");
         playerShipReg = new TextureRegion(playerShipImg, 0, 0, 32, 32);
@@ -101,7 +107,7 @@ public class AssetLoader {
         env.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
         modelBatch = new ModelBatch();
         cam = new PerspectiveCamera(67, vl.windowWidth, vl.windowHeight);
-        cam.position.set(3f, 20, 0f);
+        cam.position.set(5f, 15, 0f);
         cam.lookAt(-8,0,0);
         cam.near = 1f;
         cam.far = 300f;
@@ -123,19 +129,35 @@ public class AssetLoader {
         //cubeInstance = new ModelInstance(cubeModel);
         //modelInstances.add(cubeInstance);
 
-        floorDecal = Decal.newDecal(starFieldReg.getRegionWidth()/4, starFieldReg.getRegionHeight()/4, starFieldReg, true);
-        floorDecal.setDimensions(1000, 1000);
+        floorDecal = Decal.newDecal(starFieldTrReg.getRegionWidth()/4, starFieldTrReg.getRegionHeight()/4, starFieldTrReg, true);
+        floorDecal.setDimensions(4000, 4000);
         floorDecal.setPosition(0, -2, 0);
+        floorDecal.setRotationX(-90);
+        Decals.add(floorDecal);
+
+        floorDecal = Decal.newDecal(starFieldReg.getRegionWidth()/4, starFieldReg.getRegionHeight()/4, starFieldReg, true);
+        floorDecal.setDimensions(4000, 4000);
+        floorDecal.setPosition(0, -6, 0);
         floorDecal.setRotationX(-90);
         Decals.add(floorDecal);
 
         shipDecal = Decal.newDecal(playerShipReg.getRegionWidth()/8, playerShipReg.getRegionHeight()/8, playerShipReg, true);
         //shipDecal.setDimensions(1000, 1000);
-        shipDecal.setPosition(0, -1.9f, 0);
+        shipDecal.setPosition(0, -1.5f, 0);
         shipDecal.rotateX(-90);
         shipDecal.rotateZ(90);
         Decals.add(shipDecal);
 
+    }
+
+    public Decal addEnemyAt(float x, float y, float z){
+        enemyDecal = Decal.newDecal(playerShipReg.getRegionWidth()/8, playerShipReg.getRegionHeight()/8, playerShipReg, true);
+        //shipDecal.setDimensions(1000, 1000);
+        enemyDecal.setPosition(x, y, z);
+        enemyDecal.rotateX(-90);
+        enemyDecal.rotateZ(90);
+        Decals.add(enemyDecal);
+        return enemyDecal;
     }
 
     public void dispose () {
