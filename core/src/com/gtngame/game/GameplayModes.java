@@ -62,9 +62,16 @@ public class GameplayModes {
         }
         Gdx.gl20.glDepthMask(false);
         playerShip.update();
+        Array<Decal> enmDecs = new Array<Decal>();
         for (enemyShip enm: enmes){
-            System.out.println(enmes.indexOf(enm, true)+ "|" + enm.posX + "|" + enm.posZ);
-            enm.updateEnme();
+            enmDecs.add(enm.myDecal);
+        }
+        enmDecs.add(playerShip.myDecal);
+        ///System.out.println("size2: " + enmDecs.size);
+        al.modelInstances.clear();
+        for (enemyShip enm: enmes){
+            //System.out.println(enmes.indexOf(enm, true)+ "|" + enm.posX + "|" + enm.posZ);
+            enm.updateEnme(enmDecs);
         }
         //al.cam.position.x = playerShip.posX + 2;
         //al.cam.position.z = playerShip.posZ;
@@ -113,10 +120,11 @@ public class GameplayModes {
         vl.gameplayInitialized = true;
         asts = new Array<asteroid>();
         enmes = new Array<enemyShip>();
-        enmes.add(new enemyShip(al.addEnemyAt(5f,-1.5f,5f)));
-        enmes.add(new enemyShip(al.addEnemyAt(-5f,-1.5f,5f)));
-        enmes.add(new enemyShip(al.addEnemyAt(5f,-1.5f,-5f)));
-        enmes.add(new enemyShip(al.addEnemyAt(-5f,-1.5f,-5f)));
+        enmes.add(new enemyShip(al.addEnemyAt(0f,-1.5f,15f),al));
+        //enmes.add(new enemyShip(al.addEnemyAt(0f,-1.5f,5f),al));
+        //System.out.println("size: " + enmes.size);
+        //enmes.add(new enemyShip(al.addEnemyAt(5f,-1.5f,-5f)));
+        //enmes.add(new enemyShip(al.addEnemyAt(-5f,-1.5f,-5f)));
     }
 
     public void gameplayCleanup(){

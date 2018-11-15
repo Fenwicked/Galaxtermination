@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class AssetLoader {
@@ -116,18 +117,19 @@ public class AssetLoader {
         Gdx.input.setInputProcessor(camController);
         strategy = new CameraGroupStrategy(cam);
         decalBatch = new DecalBatch(strategy);
+        modelInstances = new Array<ModelInstance>();
     }
 
     public void buildModel(){
         //planeMaterial = new Material();
-        modelInstances = new Array<ModelInstance>();
-        Decals = new Array<Decal>();
+        //modelInstances = new Array<ModelInstance>();
         //ModelBuilder modelBuilder = new ModelBuilder();
         //cubeModel = modelBuilder.createBox(4f, 4f, 4f,
         //        new Material(ColorAttribute.createDiffuse(Color.GREEN)),
         //        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         //cubeInstance = new ModelInstance(cubeModel);
         //modelInstances.add(cubeInstance);
+        Decals = new Array<Decal>();
 
         floorDecal = Decal.newDecal(starFieldTrReg.getRegionWidth()/4, starFieldTrReg.getRegionHeight()/4, starFieldTrReg, true);
         floorDecal.setDimensions(4000, 4000);
@@ -158,6 +160,15 @@ public class AssetLoader {
         enemyDecal.rotateZ(90);
         Decals.add(enemyDecal);
         return enemyDecal;
+    }
+
+    public void addBoxAt(float x, float y, float z){
+        ModelBuilder modelBuilder = new ModelBuilder();
+        cubeModel = modelBuilder.createBox(0.3f, 5f, 0.3f,
+                new Material(ColorAttribute.createDiffuse(Color.RED)),
+                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+        cubeInstance = new ModelInstance(cubeModel, new Vector3(x,y,z));
+        modelInstances.add(cubeInstance);
     }
 
     public void dispose () {

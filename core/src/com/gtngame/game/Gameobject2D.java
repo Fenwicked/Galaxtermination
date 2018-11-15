@@ -127,7 +127,12 @@ public class Gameobject2D {
         else if (Math.abs(yawSpeed) <= yawFalloff){
             yawSpeed = 0;
         }
-
+        if (yaw > 360){
+            yaw -= 360;
+        }
+        else if (yaw < -360){
+            yaw += 360;
+        }
         myDecal.setPosition(posX,myDecal.getY(), posZ);
         myDecal.setRotation((float)yaw,90,90);
         //posX = myDecal.getX();
