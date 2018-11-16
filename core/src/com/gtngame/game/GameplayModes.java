@@ -114,14 +114,16 @@ public class GameplayModes {
     public void gameplayInit(){
         al.init3D();
         al.buildModel();
-        playerShip = new Gameobject2D(al.shipDecal);
+        playerShip = new Gameobject2D(al.shipDecal, al);
         playerShip.update();
         al.Decals.add(playerShip.myDecal);
         vl.gameplayInitialized = true;
         asts = new Array<asteroid>();
         enmes = new Array<enemyShip>();
-        enmes.add(new enemyShip(al.addEnemyAt(0f,-1.5f,15f),al));
-        //enmes.add(new enemyShip(al.addEnemyAt(0f,-1.5f,5f),al));
+        enmes.add(new enemyShip(al.addEnemyAt(-25,-1.5f,25f),al));
+        enmes.add(new enemyShip(al.addEnemyAt(-25f,-1.5f,-25),al));
+        enmes.add(new enemyShip(al.addEnemyAt(25f,-1.5f,25f),al));
+        enmes.add(new enemyShip(al.addEnemyAt(25f,-1.5f,-25),al));
         //System.out.println("size: " + enmes.size);
         //enmes.add(new enemyShip(al.addEnemyAt(5f,-1.5f,-5f)));
         //enmes.add(new enemyShip(al.addEnemyAt(-5f,-1.5f,-5f)));

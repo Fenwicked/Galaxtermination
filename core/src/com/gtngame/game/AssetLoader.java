@@ -44,6 +44,7 @@ public class AssetLoader {
     public Array<Decal> Decals;
     public DecalBatch decalBatch;
     public GroupStrategy strategy;
+    public Array<shot> shots;
 
     public AssetLoader (VarLoader vl){
         this.vl = vl;
@@ -118,6 +119,7 @@ public class AssetLoader {
         strategy = new CameraGroupStrategy(cam);
         decalBatch = new DecalBatch(strategy);
         modelInstances = new Array<ModelInstance>();
+        shots = new Array<shot>();
     }
 
     public void buildModel(){
@@ -170,7 +172,14 @@ public class AssetLoader {
         cubeInstance = new ModelInstance(cubeModel, new Vector3(x,y,z));
         modelInstances.add(cubeInstance);
     }
-
+    public void addShotAt(float x, float y, float z){
+        ModelBuilder modelBuilder = new ModelBuilder();
+        cubeModel = modelBuilder.createBox(0.3f, 0.3f, 0.3f,
+                new Material(ColorAttribute.createDiffuse(Color.CYAN)),
+                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+        cubeInstance = new ModelInstance(cubeModel, new Vector3(x,y,z));
+        modelInstances.add(cubeInstance);
+    }
     public void dispose () {
         batch.dispose();
         splashImg.dispose();

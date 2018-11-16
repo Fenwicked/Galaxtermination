@@ -27,10 +27,12 @@ public class Gameobject2D {
     private final float maxForward = 0.9f;
     private final float maxLateral = 0.9f;
     private final float maxYawSpeed = 2.5f;
+    public AssetLoader al;
 
     public Gameobject2D(){}
-    public Gameobject2D(Decal myDecal){
+    public Gameobject2D(Decal myDecal, AssetLoader al){
         this.myDecal = myDecal;
+        this.al = al;
     }
 
     final public void turnYaw(){
@@ -127,12 +129,12 @@ public class Gameobject2D {
         else if (Math.abs(yawSpeed) <= yawFalloff){
             yawSpeed = 0;
         }
-        if (yaw > 360){
-            yaw -= 360;
-        }
-        else if (yaw < -360){
-            yaw += 360;
-        }
+//        if (yaw > 360){
+//            yaw -= 360;
+//        }
+//        else if (yaw < 0){
+//            yaw += 360;
+//        }
         myDecal.setPosition(posX,myDecal.getY(), posZ);
         myDecal.setRotation((float)yaw,90,90);
         //posX = myDecal.getX();

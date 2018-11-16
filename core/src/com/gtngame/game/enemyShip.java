@@ -12,7 +12,7 @@ public class enemyShip extends Gameobject2D {
         posZ = this.myDecal.getZ();
     }
     public void updateEnme(Array<Decal> enmes){
-        accelForward(-accelRate * 0.3f);
+        accelForward(-accelRate * 0.7f);
         //enmes.removeValue(myDecal, true);
         findNearest(enmes);
         update();
@@ -40,19 +40,43 @@ public class enemyShip extends Gameobject2D {
                 //System.out.println("Setting shortest: " + shortestDist);
             }
         }
-        al.addBoxAt(targetX, -1.5f, targetZ);
+        //al.addBoxAt(targetX, -1.5f, targetZ);
         //System.out.println(yaw + " " + getYawTo(myDecal, enmes.get(enmInd)));
-        double angleTo = Math.toDegrees(Math.atan2(myDecal.getZ() - enmes.get(enmInd).getZ(), myDecal.getX() - enmes.get(enmInd).getX()) + Math.PI / 2);
-        System.out.println(angleTo);
+        double angleTo = getYawTo(myDecal, enmes.get(enmInd));
+        //Math.toDegrees(Math.atan2(myDecal.getZ() - enmes.get(enmInd).getZ(), myDecal.getX() - enmes.get(enmInd).getX()) + Math.PI / 2);
+//        if (angleTo > 360){
+//            angleTo -= 360;
+//        }
+//        else if (angleTo < 0){
+//            angleTo += 360;
+//        }
+//        if (yawForCompare > 360){
+//            yawForCompare -= 360;
+//        }
+//        else if (yawForCompare < 0){
+//            yawForCompare += 360;
+//        }
+        double angleDiff = (angleTo + 9000000) - (-yaw + 9000000);
+//        if (angleDiff > 360){
+//            angleDiff -= 180;
+//        }
+//        else if (angleDiff < 0){
+//            angleDiff += 180;
+//        }
+        //System.out.println(angleDiff);
+        //System.out.println(angleTo);
         //if (Math.abs(getYawTo(myDecal, enmes.get(enmInd))) - yaw > 0){
-        if (getYawTo(myDecal, enmes.get(enmInd)) - Math.abs(yaw) > 0){
+        if (angleDiff > 0){
+        //if (angleTo - yaw > 0){
+            //yaw += 5;
             accelYaw(-accelRate * 2);
         }
-        else if (getYawTo(myDecal, enmes.get(enmInd)) - Math.abs(yaw) < 0){
+        else if (angleDiff < 0){
+        //else if (angleTo - yaw < 0){
+            //yaw -= 5;
             accelYaw(accelRate * 2);
         }
         //System.out.println("ind: " + enmInd + " X: " + targetX + ", Z: " + targetZ + " dist: " + shortestDist);
-
     }
     public float getDist(Decal me, Decal you){
         float xDist = Math.abs(me.getX() - you.getX());
