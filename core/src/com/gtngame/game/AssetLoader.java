@@ -1,6 +1,8 @@
 package com.gtngame.game;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -14,11 +16,14 @@ import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.decals.GroupStrategy;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.UBJsonReader;
 
 public class AssetLoader {
     public SpriteBatch batch;
@@ -35,8 +40,8 @@ public class AssetLoader {
     public PerspectiveCamera cam;
     public CameraInputController camController;
     public ModelBatch modelBatch;
-    public Model cubeModel, planeModel;
-    public ModelInstance cubeInstance, planeInstance;
+    public Model cubeModel, planeModel, shotModel, astModel;
+    public ModelInstance cubeInstance, planeInstance, shotInstance, astInstance;
     public Material planeMaterial;
     //public Array<Model> models;
     public Array<ModelInstance> modelInstances;
@@ -45,6 +50,11 @@ public class AssetLoader {
     public DecalBatch decalBatch;
     public GroupStrategy strategy;
     public Array<shot> shots;
+    public Array<enemyShip> enmes;
+    public Array<asteroid> asts;
+    public ShapeRenderer shaRend;
+    public Sound pew, oww;
+    private DirectionalLight light;
 
     public AssetLoader (VarLoader vl){
         this.vl = vl;
@@ -52,7 +62,13 @@ public class AssetLoader {
 
     public void load () {
         //System.out.println("1");
+        enmes = new Array<enemyShip>();
+        asts = new Array<asteroid>();
         batch = new SpriteBatch();
+        modelBatch = new ModelBatch();
+        shaRend = new ShapeRenderer();
+        shaRend.setColor(Color.BLACK);
+        //shaRend.setProjectionMatrix(camera.combined);
         splashImg = new Texture("FGwide.jpg");
         splashSprite = new Sprite(splashImg, 0, 0, splashImg.getWidth(),splashImg.getHeight());
         //splashSprite.setPosition(Gdx.graphics.getDisplayMode().width / 2 - splashImg.getWidth() / 2, Gdx.graphics.getDisplayMode().height / 2 - splashImg.getHeight() / 2);
@@ -101,13 +117,16 @@ public class AssetLoader {
         camController = new CameraInputController(cam);
         Gdx.input.setInputProcessor(camController);
 */
+        pew = Gdx.audio.newSound(Gdx.files.internal("pew.wav"));
+        oww = Gdx.audio.newSound(Gdx.files.internal("oww.wav"));
     }
 
     public void init3D(){
+        light = new DirectionalLight().set(2.2f, 2.2f, 2.2f, -1f, -0.8f, -0.2f);
         env = new Environment();
-        env.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        env.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
-        modelBatch = new ModelBatch();
+        env.set(new ColorAttribute(ColorAttribute.AmbientLight, 2.4f, 2.4f, 2.4f, 1f));
+        env.add(light);
+        //modelBatch = new ModelBatch();
         cam = new PerspectiveCamera(67, vl.windowWidth, vl.windowHeight);
         cam.position.set(5f, 15, 0f);
         cam.lookAt(-8,0,0);
@@ -152,6 +171,29 @@ public class AssetLoader {
         shipDecal.rotateZ(90);
         Decals.add(shipDecal);
 
+        UBJsonReader jsonReader = new UBJsonReader();
+        G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
+        astModel = modelLoader.loadModel(Gdx.files.getFileHandle("asteroid.g3db", Files.FileType.Internal));
+    }
+
+    public void addAsteroidAt(asteroid ast){
+        asts.add(ast);
+    }
+
+    public ModelInstance addAsteroidMIAt(float x, float y, float z, float yaw, float pitch, float roll){
+        /*UBJsonReader jsonReader = new UBJsonReader();
+        G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
+        astModel = modelLoader.loadModel(Gdx.files.getFileHandle("asteroid.g3db", Files.FileType.Internal));*/
+        astInstance = new ModelInstance(astModel);
+        astInstance.transform.scale(1.5f,1.5f,1.5f);
+        astInstance.transform.rotate(1, 0, 0, -90);
+        astInstance.transform.rotate(Vector3.X, yaw);
+        astInstance.transform.rotate(Vector3.Y, pitch);
+        astInstance.transform.rotate(Vector3.Z, roll);
+        astInstance.transform.setTranslation(x, y, z);
+        modelInstances.add(astInstance);
+        //asts.add(ast);
+        return astInstance;
     }
 
     public Decal addEnemyAt(float x, float y, float z){
@@ -166,19 +208,33 @@ public class AssetLoader {
 
     public void addBoxAt(float x, float y, float z){
         ModelBuilder modelBuilder = new ModelBuilder();
-        cubeModel = modelBuilder.createBox(0.3f, 5f, 0.3f,
-                new Material(ColorAttribute.createDiffuse(Color.RED)),
+        cubeModel = modelBuilder.createBox(0.4f, 0.4f, 0.4f,
+                new Material(ColorAttribute.createDiffuse(Color.ORANGE)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         cubeInstance = new ModelInstance(cubeModel, new Vector3(x,y,z));
         modelInstances.add(cubeInstance);
     }
-    public void addShotAt(float x, float y, float z){
+
+    public void addCircleAt(float x, float y, float z){
         ModelBuilder modelBuilder = new ModelBuilder();
-        cubeModel = modelBuilder.createBox(0.3f, 0.3f, 0.3f,
-                new Material(ColorAttribute.createDiffuse(Color.CYAN)),
+        cubeModel = modelBuilder.createCylinder(4,0.1f,4,16,
+                new Material(ColorAttribute.createDiffuse(Color.GREEN)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         cubeInstance = new ModelInstance(cubeModel, new Vector3(x,y,z));
         modelInstances.add(cubeInstance);
+    }
+
+    public void addShotAt(shot sht){
+        /*ModelBuilder modelBuilder = new ModelBuilder();
+        modelBuilder.begin();
+        MeshPartBuilder builder = modelBuilder.part("line", 1, 3, new Material());
+        builder.setColor(Color.CYAN);
+        //System.out.println("shot 3: " + sht.posX + " " + sht.posZ + " " + sht.targetX + " " + sht.targetZ);
+        builder.line(sht.posX, -1.8f, sht.posZ, sht.targetX, -1.8f, sht.targetZ);
+        shotModel = modelBuilder.end();
+        shotInstance = new ModelInstance(shotModel);*/
+        //modelInstances.add(shotInstance);
+        shots.add(sht);
     }
     public void dispose () {
         batch.dispose();

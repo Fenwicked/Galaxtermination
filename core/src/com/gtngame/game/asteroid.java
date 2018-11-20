@@ -1,10 +1,39 @@
 package com.gtngame.game;
 
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.utils.Array;
 
-public class asteroid extends Gameobject2D {
+import java.util.Random;
 
-    public asteroid(Decal myDecal){
-        this.myDecal = myDecal;
+public class asteroid extends Gameobject3D {
+    ModelInstance myMI;
+    Random r;
+    public asteroid(float startX, float startZ, AssetLoader al){
+        this.posX = startX;
+        this.posZ = startZ;
+        this.al = al;
+        r = new Random();
+        yawSpeed = r.nextFloat();
+        pitchSpeed = r.nextFloat();
+        rollSpeed = r.nextFloat();
+        al.addAsteroidAt(this);
+    }
+
+    public void updateAst(){
+        yaw += yawSpeed;
+        pitch += pitchSpeed;
+        roll += rollSpeed;
+        al.addAsteroidMIAt(posX, -1.5f, posZ, (float)yaw, pitch, roll);
+        //al.modelInstances.add(myMI);
+        /*if (collide) {
+            for (enemyShip nme : enmes) {
+                if (getDistForCollision(nme) <= 2) {
+                    al.enmes.removeValue(nme, true);
+                    al.Decals.removeValue(nme.myDecal, true);
+                    al.oww.play(1.5f);
+                }
+            }
+        }*/
     }
 }

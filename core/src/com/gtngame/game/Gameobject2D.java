@@ -108,6 +108,7 @@ public class Gameobject2D {
             motionX = 0;
             motionZ = 0;
         }
+        motionForward = (float)Math.sqrt(Math.pow(motionX,2) * Math.pow(motionZ, 2));
         //System.out.println(yaw);
         //System.out.println("motionX: " + motionX + " motionZ: " + motionZ);
         yaw += yawSpeed;

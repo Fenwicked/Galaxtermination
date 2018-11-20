@@ -1,27 +1,38 @@
 package com.gtngame.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Random;
+
 public class enemyShip extends Gameobject2D {
     AssetLoader al;
+    int numShots;
+    float shotTimer;
+    boolean shotTimerStarted;
+    Random r;
     public enemyShip(Decal myDecal, AssetLoader al){
         this.al = al;
         this.myDecal = myDecal;
         posX = this.myDecal.getX();
         posZ = this.myDecal.getZ();
+        r = new Random();
+        shotTimer = r.nextFloat()/2;
+        shotTimerStarted = false;
     }
     public void updateEnme(Array<Decal> enmes){
         accelForward(-accelRate * 0.7f);
-        //enmes.removeValue(myDecal, true);
         findNearest(enmes);
+        if (shotTimerStarted) {
+            shotTimer += Gdx.graphics.getDeltaTime();
+        }
+        shoot();
         update();
+        //al.addCircleAt(posX,-2, posZ);
     };
     public void findNearest(Array<Decal> enmes){
-        //System.out.println("size3: " + enmes.size);
-        //Array<Decal> newEnmes = new Array<Decal>();
         float shortestDist = 1000;
-        float targetX = 0, targetZ = 0;
         int enmInd = 0;
         for (Decal enmDec : enmes) {
         //    if (myDecal.getX() != enmDec.getX() && myDecal.getZ() != enmDec.getZ()) {
@@ -34,14 +45,10 @@ public class enemyShip extends Gameobject2D {
 
             if (getDist(myDecal, enmDec) <= shortestDist && getDist(myDecal, enmDec) > 0.0f){
                 shortestDist = getDist(myDecal, enmDec);
-                targetX = enmDec.getX();
-                targetZ = enmDec.getZ();
                 enmInd = enmes.indexOf(enmDec, true);
-                //System.out.println("Setting shortest: " + shortestDist);
             }
         }
         //al.addBoxAt(targetX, -1.5f, targetZ);
-        //System.out.println(yaw + " " + getYawTo(myDecal, enmes.get(enmInd)));
         double angleTo = getYawTo(myDecal, enmes.get(enmInd));
         //Math.toDegrees(Math.atan2(myDecal.getZ() - enmes.get(enmInd).getZ(), myDecal.getX() - enmes.get(enmInd).getX()) + Math.PI / 2);
 //        if (angleTo > 360){
@@ -67,16 +74,11 @@ public class enemyShip extends Gameobject2D {
         //System.out.println(angleTo);
         //if (Math.abs(getYawTo(myDecal, enmes.get(enmInd))) - yaw > 0){
         if (angleDiff > 0){
-        //if (angleTo - yaw > 0){
-            //yaw += 5;
             accelYaw(-accelRate * 2);
         }
         else if (angleDiff < 0){
-        //else if (angleTo - yaw < 0){
-            //yaw -= 5;
             accelYaw(accelRate * 2);
         }
-        //System.out.println("ind: " + enmInd + " X: " + targetX + ", Z: " + targetZ + " dist: " + shortestDist);
     }
     public float getDist(Decal me, Decal you){
         float xDist = Math.abs(me.getX() - you.getX());
@@ -87,5 +89,24 @@ public class enemyShip extends Gameobject2D {
         float xPosDiff = me.getX() - you.getX();
         float zPosDiff = me.getZ() - you.getZ();
         return (float)Math.toDegrees(Math.atan2((double)zPosDiff, (double)xPosDiff));
+    }
+    public void shoot (){
+        if (numShots < 3) {
+            shot sht = new shot(posX, posZ, 100, (float)yaw, al, motionX, motionZ);
+            numShots += 1;
+            shotTimerStarted = true;
+        }
+        if (shotTimer > 0.5f){
+            numShots = 0;
+            shotTimer = 0;
+            shotTimerStarted = false;
+        }
+        if(numShots < 1) {
+            al.pew.play(0.3f);
+        }
+        //System.out.println("shot 1: " + posX + " " + posZ + " " + yaw);
+    }
+    public void die(){
+
     }
 }

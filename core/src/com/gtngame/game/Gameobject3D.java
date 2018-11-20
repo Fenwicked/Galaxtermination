@@ -11,6 +11,7 @@ public class Gameobject3D extends Gameobject2D{
     public float pitch, roll;
     public float pitchSpeed, rollSpeed;
 
+    public Gameobject3D(){}
     public Gameobject3D(Decal myDecal){
         this.myDecal = myDecal;
     }

@@ -12,11 +12,13 @@ import com.badlogic.gdx.utils.Timer;
 public class GameplayModes {
     AssetLoader al;
     VarLoader vl;
-    Gameobject2D playerShip;
-    asteroid ast;
-    Array<asteroid> asts;
+    playerShip playerShip;
     enemyShip enme;
+    asteroid ast;
     Array<enemyShip> enmes;
+    int numPlayerShots;
+    float playerShotTimer;
+    boolean playerShotTimerStarted;
 
     public GameplayModes(AssetLoader al, VarLoader vl){
         this.al = al;
@@ -44,89 +46,91 @@ public class GameplayModes {
                 }*/
             }, 25);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)){
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             playerShip.accelYaw(playerShip.accelRate);
             //al.cam.translate(0,0,0.1f);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             playerShip.accelYaw(-playerShip.accelRate);
             //al.cam.translate(0,0,-0.1f);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)){
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             playerShip.accelForward(-playerShip.accelRate);
             //al.cam.translate(-0.1f,0,0);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)){
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
             playerShip.accelForward(playerShip.accelRate);
             //al.cam.translate(0.1f,0,0);
         }
+        //System.out.println(playerShotTimer);
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+            playerShip.shoot();;
+        }
         Gdx.gl20.glDepthMask(false);
         playerShip.update();
+        //al.addCircleAt(playerShip.posX,-2, playerShip.posZ);
         Array<Decal> enmDecs = new Array<Decal>();
-        for (enemyShip enm: enmes){
+        for (enemyShip enm: al.enmes){
             enmDecs.add(enm.myDecal);
         }
         enmDecs.add(playerShip.myDecal);
         ///System.out.println("size2: " + enmDecs.size);
-        al.modelInstances.clear();
-        for (enemyShip enm: enmes){
-            //System.out.println(enmes.indexOf(enm, true)+ "|" + enm.posX + "|" + enm.posZ);
+        //al.modelInstances.clear();
+        for (enemyShip enm: al.enmes){
+            //System.out.println(al.enmes.indexOf(enm, true)+ "|" + enm.posX + "|" + enm.posZ);
             enm.updateEnme(enmDecs);
         }
-        //al.cam.position.x = playerShip.posX + 2;
-        //al.cam.position.z = playerShip.posZ;
-        //al.cam.position.x = returnPosArroundObj(new Vector3(playerShip.posX,-1.9f,playerShip.posZ),playerShip.yaw,2f,20f).x;
-        //al.cam.position.z = returnPosArroundObj(new Vector3(playerShip.posX,-1.9f,playerShip.posZ),playerShip.yaw,2f,20f).z;
+        for (shot sht : al.shots){
+            sht.updateShot(al.enmes, al.asts,true);
+        }
+        for (asteroid ast : al.asts){
+            ast.updateAst();
+        }
+        //System.out.println(al.modelInstances.size);
         Vector2 motionVec = new Vector2(5f, 0).rotate(-(float)playerShip.yaw + playerShip.yawSpeed);
-        //this.motionX += Math.sin(this.yaw) * xMO;
-        //this.motionZ += Math.cos(this.yaw) * xMO;
-        //al.cam.position.x = playerShip.posX + (5f * (float)Math.sin(Math.toRadians(-Math.abs(playerShip.yaw))));
-        //al.cam.position.z = playerShip.posZ + (5f * (float)Math.cos(Math.toRadians(-Math.abs(playerShip.yaw))));
         al.cam.position.x = playerShip.posX + motionVec.x;
         al.cam.position.z = playerShip.posZ + motionVec.y;
         al.cam.lookAt(new Vector3(playerShip.posX - motionVec.x * 2,0, playerShip.posZ - motionVec.y * 2));
         al.cam.up.set(al.cam.position.x, 5000, al.cam.position.z);
 
         al.cam.update();
-        //al.camController.update();
         al.modelBatch.begin(al.cam);
         al.modelBatch.render(al.modelInstances, al.env);
         al.modelBatch.end();
         for (Decal dec : al.Decals){
             al.decalBatch.add(dec);
         }
-        //playerShip.update();
         al.decalBatch.flush();
         al.batch.begin();
         if (vl.debugMode) al.font.draw(al.batch, "GAMEPLAY",100,vl.windowHeight - 100);
         //al.batch.draw(al.dbgGameplay,10,10);
+        al.modelInstances.clear();
         al.batch.end();
-    }
-
-    public static Vector3 returnPosArroundObj(Vector3 posObject, Float angleDegrees, Float radius, Float height) {
-        Float angleRadians = angleDegrees * MathUtils.degreesToRadians;
-        Vector3 position = new Vector3();
-        position.set(radius * MathUtils.sin(angleRadians), height, radius * MathUtils.cos(angleRadians));
-        position.add(posObject); //add the position so it would be arround object
-        return position;
     }
 
     public void gameplayInit(){
         al.init3D();
         al.buildModel();
-        playerShip = new Gameobject2D(al.shipDecal, al);
+        playerShip = new playerShip(al.shipDecal, al);
         playerShip.update();
         al.Decals.add(playerShip.myDecal);
+        //al.addCircleAt(playerShip.posX,-2, playerShip.posZ);
         vl.gameplayInitialized = true;
-        asts = new Array<asteroid>();
-        enmes = new Array<enemyShip>();
-        enmes.add(new enemyShip(al.addEnemyAt(-25,-1.5f,25f),al));
-        enmes.add(new enemyShip(al.addEnemyAt(-25f,-1.5f,-25),al));
-        enmes.add(new enemyShip(al.addEnemyAt(25f,-1.5f,25f),al));
-        enmes.add(new enemyShip(al.addEnemyAt(25f,-1.5f,-25),al));
-        //System.out.println("size: " + enmes.size);
-        //enmes.add(new enemyShip(al.addEnemyAt(5f,-1.5f,-5f)));
-        //enmes.add(new enemyShip(al.addEnemyAt(-5f,-1.5f,-5f)));
+        al.enmes = new Array<enemyShip>();
+        /*al.enmes.add(new enemyShip(al.addEnemyAt(-25,-1.5f,25f),al));
+        al.enmes.add(new enemyShip(al.addEnemyAt(-25f,-1.5f,-25),al));
+        al.enmes.add(new enemyShip(al.addEnemyAt(25f,-1.5f,25f),al));
+        al.enmes.add(new enemyShip(al.addEnemyAt(25f,-1.5f,-25),al));*/
+        ast = new asteroid(-10,-10, al);
+        ast = new asteroid(-20,-10, al);
+        ast = new asteroid(-30,-10, al);
+        ast = new asteroid(-10,0, al);
+        ast = new asteroid(-20,0, al);
+        ast = new asteroid(-30,0, al);
+        ast = new asteroid(-10,10, al);
+        ast = new asteroid(-20,10, al);
+        ast = new asteroid(-30,10, al);
+        //System.out.println("size: " + al.enmes.size);
     }
 
     public void gameplayCleanup(){
