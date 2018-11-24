@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class enemyShip extends Gameobject2D {
     AssetLoader al;
-    int numShots;
+    int numShots = 1;
     float shotTimer;
     boolean shotTimerStarted;
     Random r;
@@ -18,11 +18,12 @@ public class enemyShip extends Gameobject2D {
         posX = this.myDecal.getX();
         posZ = this.myDecal.getZ();
         r = new Random();
-        shotTimer = r.nextFloat()/2;
-        shotTimerStarted = false;
+        shotTimer = (r.nextFloat()/2) - 3;
+        shotTimerStarted = true;
     }
     public void updateEnme(Array<Decal> enmes){
-        accelForward(-accelRate * 0.7f);
+        //System.out.println("updating");
+        accelForward(-accelRate * 0.6f);
         findNearest(enmes);
         if (shotTimerStarted) {
             shotTimer += Gdx.graphics.getDeltaTime();
@@ -30,9 +31,12 @@ public class enemyShip extends Gameobject2D {
         shoot();
         update();
         //al.addCircleAt(posX,-2, posZ);
-    };
+    }
+    public void refreshEnme(Array<Decal> enmes){
+        refresh();
+    }
     public void findNearest(Array<Decal> enmes){
-        float shortestDist = 1000;
+        float shortestDist = 2000;
         int enmInd = 0;
         for (Decal enmDec : enmes) {
         //    if (myDecal.getX() != enmDec.getX() && myDecal.getZ() != enmDec.getZ()) {
@@ -74,10 +78,10 @@ public class enemyShip extends Gameobject2D {
         //System.out.println(angleTo);
         //if (Math.abs(getYawTo(myDecal, enmes.get(enmInd))) - yaw > 0){
         if (angleDiff > 0){
-            accelYaw(-accelRate * 2);
+            accelYaw(-accelRate * 1.2f);
         }
         else if (angleDiff < 0){
-            accelYaw(accelRate * 2);
+            accelYaw(accelRate * 1.2f);
         }
     }
     public float getDist(Decal me, Decal you){
@@ -91,19 +95,18 @@ public class enemyShip extends Gameobject2D {
         return (float)Math.toDegrees(Math.atan2((double)zPosDiff, (double)xPosDiff));
     }
     public void shoot (){
-        if (numShots < 3) {
-            shot sht = new shot(posX, posZ, 100, (float)yaw, al, motionX, motionZ);
+        if (numShots < 1) {
+            shot sht = new shot(posX, posZ, 50, (float)yaw, al, motionX, motionZ, true);
+            al.pew.play(0.02f);
             numShots += 1;
             shotTimerStarted = true;
         }
-        if (shotTimer > 0.5f){
+        if (shotTimer > 1f){
             numShots = 0;
             shotTimer = 0;
             shotTimerStarted = false;
         }
-        if(numShots < 1) {
-            al.pew.play(0.3f);
-        }
+        //System.out.println(shotTimer + " " + numShots);
         //System.out.println("shot 1: " + posX + " " + posZ + " " + yaw);
     }
     public void die(){

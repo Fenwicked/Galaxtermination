@@ -23,7 +23,6 @@ public class Gameobject3D extends Gameobject2D{
         this.roll += this.rollSpeed;
     }
 
-    @Override
     final public void turnAll(){
         turnYaw();
         turnPitch();

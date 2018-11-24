@@ -24,7 +24,7 @@ public class asteroid extends Gameobject3D {
         yaw += yawSpeed;
         pitch += pitchSpeed;
         roll += rollSpeed;
-        al.addAsteroidMIAt(posX, -1.5f, posZ, (float)yaw, pitch, roll);
+        refreshAst();
         //al.modelInstances.add(myMI);
         /*if (collide) {
             for (enemyShip nme : enmes) {
@@ -35,5 +35,8 @@ public class asteroid extends Gameobject3D {
                 }
             }
         }*/
+    }
+    public void refreshAst(){
+        al.addAsteroidMIAt(posX, -1.5f, posZ, (float)yaw, pitch, roll);
     }
 }

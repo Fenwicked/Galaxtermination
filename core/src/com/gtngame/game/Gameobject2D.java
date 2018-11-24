@@ -38,21 +38,8 @@ public class Gameobject2D {
     final public void turnYaw(){
         this.yaw += this.yawSpeed;
     }
-    public void turnAll(){
-        turnYaw();
-    }
 
     final public void accelYaw(Float yawAccel) { this.yawSpeed += yawAccel * 1.5;}
-    final public void translateZ(Float zTr){
-        this.posZ += zTr;
-    }
-    final public void translateX(Float xTr){
-        this.posX += xTr;
-    }
-    final public void accelZ(Float zMO) { this.motionZ += zMO; } //old
-    final public void accelX(Float xMO){
-        this.motionX += xMO;
-    } //old
     //final public void accelLateral(Float zMO) { this.motionLateral += zMO; }
     final public void accelForward(Float xMO){
         //this.motionX += Math.sin(this.yaw) * xMO;
@@ -136,10 +123,13 @@ public class Gameobject2D {
 //        else if (yaw < 0){
 //            yaw += 360;
 //        }
-        myDecal.setPosition(posX,myDecal.getY(), posZ);
-        myDecal.setRotation((float)yaw,90,90);
+        refresh();
         //posX = myDecal.getX();
         //posZ = myDecal.getZ();
         //yaw = myDecal.getRotation().getYaw();
+    }
+    public void refresh(){
+        myDecal.setPosition(posX,myDecal.getY(), posZ);
+        myDecal.setRotation((float)yaw,90,90);
     }
 }

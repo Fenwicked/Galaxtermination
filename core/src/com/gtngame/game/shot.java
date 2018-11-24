@@ -6,7 +6,8 @@ import com.badlogic.gdx.utils.Array;
 public class shot extends Gameobject2D {
     AssetLoader al;
     float totalDist, targetX, targetZ, initX, initZ, shotSpeed, targetRemoveRadius;
-    public shot (float startX, float startZ, float totalDist, float startYaw, AssetLoader al, float initX, float initZ){
+    boolean isEnemy;
+    public shot (float startX, float startZ, float totalDist, float startYaw, AssetLoader al, float initX, float initZ, boolean isEnemy){
         this.al = al;
         this.posX = startX;
         this.posZ = startZ;
@@ -14,6 +15,7 @@ public class shot extends Gameobject2D {
         this.yaw = startYaw;
         this.initX = initX;
         this.initZ = initZ;
+        this.isEnemy = isEnemy;
         shotSpeed = 2f;
         targetRemoveRadius = 0.7f;
         getTarget();
@@ -47,18 +49,33 @@ public class shot extends Gameobject2D {
                     al.enmes.removeValue(nme, true);
                     al.Decals.removeValue(nme.myDecal, true);
                     al.shots.removeValue(this,true);
-                    al.oww.play(1.5f);
+                    if (isEnemy) {
+                        al.oww.play(0.1f);
+                    }
+                    else
+                    {
+                        al.oww.play(1.0f);
+                    }
                 }
             }
             for (asteroid ast : asts) {
-                if (getDistForCollision(ast) <= 2) {
+                if (getDistForCollision(ast) <= 3) {
                     al.asts.removeValue(ast, true);
                     al.modelInstances.removeValue(ast.myMI, true);
                     al.shots.removeValue(this,true);
-                    al.oww.play(1.5f);
+                    if (isEnemy) {
+                        al.oww.play(0.1f);
+                    }
+                    else
+                    {
+                        al.oww.play(1.0f);
+                    }
                 }
             }
         }
+    }
+    public void refreshShot(Array<enemyShip> enmes, Array<asteroid> asts, boolean collide){
+        al.addBoxAt(posX, -1.9f, posZ);
     }
     public void getTarget(){
         targetX = posX - (totalDist * (float)(Math.cos(Math.toRadians(yaw))));

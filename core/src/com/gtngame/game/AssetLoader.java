@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.decals.GroupStrategy;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
@@ -29,8 +30,8 @@ public class AssetLoader {
     public SpriteBatch batch;
     public Sprite splashSprite;
     public Array<Sprite> sprites;
-    public Texture splashImg, starFieldImg, starFieldTrImg, playerShipImg;
-    public TextureRegion playerShipReg, starFieldReg, starFieldTrReg;//dbgSplash, dbgCredits, dbgMM, dbgSettings, dbgGameplay, dbgPaused, dbgGameOver;
+    public Texture splashImg, starFieldImg, starFieldTrImg, playerShipImg, logoImg, pausedImg;
+    public TextureRegion playerShipReg, starFieldReg, starFieldTrReg, logoReg, pausedReg;//dbgSplash, dbgCredits, dbgMM, dbgSettings, dbgGameplay, dbgPaused, dbgGameOver;
     public Float splashTimer;
     public VarLoader vl;
     public BitmapFont font;
@@ -52,9 +53,11 @@ public class AssetLoader {
     public Array<shot> shots;
     public Array<enemyShip> enmes;
     public Array<asteroid> asts;
+    public Array<AnimationController> astAnim;
     public ShapeRenderer shaRend;
     public Sound pew, oww;
     private DirectionalLight light;
+    AnimationController animControl;
 
     public AssetLoader (VarLoader vl){
         this.vl = vl;
@@ -64,6 +67,7 @@ public class AssetLoader {
         //System.out.println("1");
         enmes = new Array<enemyShip>();
         asts = new Array<asteroid>();
+        astAnim = new Array<AnimationController>();
         batch = new SpriteBatch();
         modelBatch = new ModelBatch();
         shaRend = new ShapeRenderer();
@@ -87,6 +91,12 @@ public class AssetLoader {
 
         playerShipImg = new Texture("playership.png");
         playerShipReg = new TextureRegion(playerShipImg, 0, 0, 32, 32);
+
+        logoImg = new Texture("GTNLOGO.png");
+        //logoReg = new TextureRegion(logoImg, 0, 0, 1200, 146);
+
+        pausedImg = new Texture("PAUSED.png");
+        //pausedReg = new TextureRegion(pausedImg, 0, 0, 852, 200);
         /*debugModesTxr = new Texture("debugtitles.png");
         dbgSplash = new TextureRegion(debugModesTxr, 0, 0, 69, 13);
         dbgCredits = new TextureRegion(debugModesTxr, 0, 13, 69, 10);
@@ -128,8 +138,10 @@ public class AssetLoader {
         env.add(light);
         //modelBatch = new ModelBatch();
         cam = new PerspectiveCamera(67, vl.windowWidth, vl.windowHeight);
-        cam.position.set(5f, 15, 0f);
-        cam.lookAt(-8,0,0);
+        cam.position.set(5f, 20, 0f);
+        cam.lookAt(-9,0,0);
+//        cam.position.set(0f, 150, 0f);
+//        cam.lookAt(0,0,0);
         cam.near = 1f;
         cam.far = 300f;
         cam.update();
@@ -174,6 +186,13 @@ public class AssetLoader {
         UBJsonReader jsonReader = new UBJsonReader();
         G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
         astModel = modelLoader.loadModel(Gdx.files.getFileHandle("asteroid.g3db", Files.FileType.Internal));
+        //System.out.println("ANIM: "+astModel.animations.get(0).id);
+
+//        for (int i = 0; i < astModel.animations.size; i++) {
+//            //System.out.println(astModel.animations.get(i).id);
+//            astAnim.add(new AnimationController())
+//        }
+
     }
 
     public void addAsteroidAt(asteroid ast){
@@ -185,7 +204,7 @@ public class AssetLoader {
         G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
         astModel = modelLoader.loadModel(Gdx.files.getFileHandle("asteroid.g3db", Files.FileType.Internal));*/
         astInstance = new ModelInstance(astModel);
-        astInstance.transform.scale(1.5f,1.5f,1.5f);
+        astInstance.transform.scale(1.8f,1.8f,1.8f);
         astInstance.transform.rotate(1, 0, 0, -90);
         astInstance.transform.rotate(Vector3.X, yaw);
         astInstance.transform.rotate(Vector3.Y, pitch);
@@ -193,6 +212,17 @@ public class AssetLoader {
         astInstance.transform.setTranslation(x, y, z);
         modelInstances.add(astInstance);
         //asts.add(ast);
+
+//        for (int i = 0; i < astModel.animations.size; i++) {
+//            animControl = new AnimationController(astInstance);
+//            animControl.setAnimation(astModel.animations.get(i).id);
+//            //System.out.println(astModel.animations.get(i).id);
+//            astAnim.add(animControl);
+//        }
+        //animControl.queue(ship.animations.get(0).id, 3, 1, null, 0);
+        //animControl.queue(astModel.animations.get(1).id, 380, 0.3f, null, 0);
+        //animControl.
+
         return astInstance;
     }
 
