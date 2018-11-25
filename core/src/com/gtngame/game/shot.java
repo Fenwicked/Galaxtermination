@@ -7,7 +7,8 @@ public class shot extends Gameobject2D {
     AssetLoader al;
     float totalDist, targetX, targetZ, initX, initZ, shotSpeed, targetRemoveRadius;
     boolean isEnemy;
-    public shot (float startX, float startZ, float totalDist, float startYaw, AssetLoader al, float initX, float initZ, boolean isEnemy){
+    playerShip playerShip;
+    public shot (float startX, float startZ, float totalDist, float startYaw, AssetLoader al, float initX, float initZ, boolean isEnemy, playerShip playerShip){
         this.al = al;
         this.posX = startX;
         this.posZ = startZ;
@@ -16,16 +17,17 @@ public class shot extends Gameobject2D {
         this.initX = initX;
         this.initZ = initZ;
         this.isEnemy = isEnemy;
+        this.playerShip = playerShip;
         shotSpeed = 2f;
         targetRemoveRadius = 0.7f;
         getTarget();
         //System.out.println("shot 2: " + posX + " " + posZ + " " + yaw);
         al.addShotAt(this);
-        updateShot(al.enmes, al.asts, false);
+        updateShot(al.enmes, al.asts, false, playerShip);
         //al.shots.add(this);
     }
 
-    public void updateShot(Array<enemyShip> enmes, Array<asteroid> asts, boolean collide){
+    public void updateShot(Array<enemyShip> enmes, Array<asteroid> asts, boolean collide, playerShip playerShip){
         float theta = -(float)Math.atan2(Math.abs(targetX - posX), Math.abs(targetZ - posZ));
         if (posX > targetX){
             posX -= (shotSpeed * -(float)(Math.sin(theta)));
@@ -50,11 +52,12 @@ public class shot extends Gameobject2D {
                     al.Decals.removeValue(nme.myDecal, true);
                     al.shots.removeValue(this,true);
                     if (isEnemy) {
-                        al.oww.play(0.1f);
+                        al.nmeoww.play(0.05f);
                     }
                     else
                     {
-                        al.oww.play(1.0f);
+                        playerShip.confirmKill(5);
+                        al.nmeoww.play(0.6f);
                     }
                 }
             }
@@ -64,12 +67,20 @@ public class shot extends Gameobject2D {
                     al.modelInstances.removeValue(ast.myMI, true);
                     al.shots.removeValue(this,true);
                     if (isEnemy) {
-                        al.oww.play(0.1f);
+                        al.astoww.play(0.02f);
                     }
                     else
                     {
-                        al.oww.play(1.0f);
+                        playerShip.confirmKill(1);
+                        al.astoww.play(0.3f);
                     }
+                }
+            }
+            if (getDistForCollision(playerShip) <= 2) {
+
+                al.shots.removeValue(this,true);
+                if (isEnemy) {
+                    playerShip.injure();
                 }
             }
         }
@@ -89,5 +100,8 @@ public class shot extends Gameobject2D {
     }
     public float getDistForCollision(asteroid ast){
         return (float)Math.sqrt(Math.pow(posX - ast.posX,2) + Math.pow(posZ - ast.posZ,2));
+    }
+    public float getDistForCollision(playerShip plr){
+        return (float)Math.sqrt(Math.pow(posX - plr.posX,2) + Math.pow(posZ - plr.posZ,2));
     }
 }

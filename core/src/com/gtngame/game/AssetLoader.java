@@ -30,8 +30,8 @@ public class AssetLoader {
     public SpriteBatch batch;
     public Sprite splashSprite;
     public Array<Sprite> sprites;
-    public Texture splashImg, starFieldImg, starFieldTrImg, playerShipImg, logoImg, pausedImg;
-    public TextureRegion playerShipReg, starFieldReg, starFieldTrReg, logoReg, pausedReg;//dbgSplash, dbgCredits, dbgMM, dbgSettings, dbgGameplay, dbgPaused, dbgGameOver;
+    public Texture splashImg, starFieldImg, starFieldTrImg, playerShipImg, logoImg, pausedImg, victoryImg, gameoverImg, shieldImg, titleBG;
+    public TextureRegion playerShipReg, playerShipEngineReg, playerShipInvisReg, starFieldReg, starFieldTrReg, shieldReg;
     public Float splashTimer;
     public VarLoader vl;
     public BitmapFont font;
@@ -55,7 +55,7 @@ public class AssetLoader {
     public Array<asteroid> asts;
     public Array<AnimationController> astAnim;
     public ShapeRenderer shaRend;
-    public Sound pew, oww;
+    public Sound shot, nmeshot, hurt, dead, nmeoww, astoww;
     private DirectionalLight light;
     AnimationController animControl;
 
@@ -91,12 +91,17 @@ public class AssetLoader {
 
         playerShipImg = new Texture("playership.png");
         playerShipReg = new TextureRegion(playerShipImg, 0, 0, 32, 32);
+        playerShipEngineReg = new TextureRegion(playerShipImg, 0, 32, 32, 32);
+        playerShipInvisReg = new TextureRegion(playerShipImg, 32, 32, 32, 32);
+
+        shieldImg = new Texture("shield.png");
+        shieldReg = new TextureRegion(shieldImg, 0, 0, 32, 32);
 
         logoImg = new Texture("GTNLOGO.png");
-        //logoReg = new TextureRegion(logoImg, 0, 0, 1200, 146);
-
         pausedImg = new Texture("PAUSED.png");
-        //pausedReg = new TextureRegion(pausedImg, 0, 0, 852, 200);
+        victoryImg = new Texture("VICTORY.png");
+        gameoverImg = new Texture("GAMEOVER.png");
+        titleBG = new Texture("titlebg.png");
         /*debugModesTxr = new Texture("debugtitles.png");
         dbgSplash = new TextureRegion(debugModesTxr, 0, 0, 69, 13);
         dbgCredits = new TextureRegion(debugModesTxr, 0, 13, 69, 10);
@@ -106,7 +111,7 @@ public class AssetLoader {
         dbgPaused = new TextureRegion(debugModesTxr, 0, 58, 69, 10);
         dbgGameOver = new TextureRegion(debugModesTxr, 0, 67, 69, 9);
         */
-        font = new BitmapFont();
+        font = new BitmapFont(Gdx.files.internal("wr.fnt"));
 
 /*        //3d stuff
         /*env = new Environment();
@@ -127,8 +132,13 @@ public class AssetLoader {
         camController = new CameraInputController(cam);
         Gdx.input.setInputProcessor(camController);
 */
-        pew = Gdx.audio.newSound(Gdx.files.internal("pew.wav"));
-        oww = Gdx.audio.newSound(Gdx.files.internal("oww.wav"));
+        shot = Gdx.audio.newSound(Gdx.files.internal("shot.wav"));
+        nmeshot = Gdx.audio.newSound(Gdx.files.internal("nmeshot.wav"));
+        hurt = Gdx.audio.newSound(Gdx.files.internal("hurt.wav"));
+        dead = Gdx.audio.newSound(Gdx.files.internal("dead.wav"));
+        nmeoww = Gdx.audio.newSound(Gdx.files.internal("nmeoww.wav"));
+        astoww = Gdx.audio.newSound(Gdx.files.internal("astoww.wav"));
+
     }
 
     public void init3D(){
@@ -138,7 +148,7 @@ public class AssetLoader {
         env.add(light);
         //modelBatch = new ModelBatch();
         cam = new PerspectiveCamera(67, vl.windowWidth, vl.windowHeight);
-        cam.position.set(5f, 20, 0f);
+        cam.position.set(5f, 25, 0f);
         cam.lookAt(-9,0,0);
 //        cam.position.set(0f, 150, 0f);
 //        cam.lookAt(0,0,0);

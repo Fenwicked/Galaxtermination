@@ -12,7 +12,8 @@ public class enemyShip extends Gameobject2D {
     float shotTimer;
     boolean shotTimerStarted;
     Random r;
-    public enemyShip(Decal myDecal, AssetLoader al){
+    playerShip playerShip;
+    public enemyShip(Decal myDecal, AssetLoader al, playerShip playerShip){
         this.al = al;
         this.myDecal = myDecal;
         posX = this.myDecal.getX();
@@ -20,6 +21,7 @@ public class enemyShip extends Gameobject2D {
         r = new Random();
         shotTimer = (r.nextFloat()/2) - 3;
         shotTimerStarted = true;
+        this.playerShip = playerShip;
     }
     public void updateEnme(Array<Decal> enmes){
         //System.out.println("updating");
@@ -96,8 +98,8 @@ public class enemyShip extends Gameobject2D {
     }
     public void shoot (){
         if (numShots < 1) {
-            shot sht = new shot(posX, posZ, 50, (float)yaw, al, motionX, motionZ, true);
-            al.pew.play(0.02f);
+            shot sht = new shot(posX, posZ, 50, (float)yaw, al, motionX, motionZ, true, playerShip);
+            al.nmeshot.play(0.01f);
             numShots += 1;
             shotTimerStarted = true;
         }

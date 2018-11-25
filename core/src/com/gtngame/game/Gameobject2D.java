@@ -61,7 +61,24 @@ public class Gameobject2D {
     }
     public void update(){
         posX += motionX;
+        if (posX > 1500){
+            motionX = -motionX;
+            posX -= 2;
+        }
+        else if (posX < -1500){
+            motionX = -motionX;
+            posX += 2;
+        }
         posZ += motionZ;
+        if (posZ > 1500){
+            motionZ = -motionZ;
+            posZ -= 2;
+        }
+        else if (posZ < -1500){
+            motionZ = -motionZ;
+            posZ += 2;
+        }
+        if (posZ > 1500 || posZ < -1500) motionZ = -motionZ;
         if (motionX > 0) {
             motionX -= motionDecay * (Math.abs(motionX) / (Math.abs(motionX) + Math.abs(motionZ)));
         }
