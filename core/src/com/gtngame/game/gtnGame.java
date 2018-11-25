@@ -14,23 +14,28 @@ public class gtnGame extends ApplicationAdapter {
 	@Override
 	public void create () {
 		vl = new VarLoader();
-		vl.load();
 		al = new AssetLoader(vl);
-		al.load();
-		mm = new MenuModes(al,vl);
-		gm = new GameplayModes(al,vl);
-
+		load();
 		Graphics.DisplayMode mode = Gdx.graphics.getDisplayMode();
 		vl.windowWidth = mode.width - 100;
 		vl.windowHeight = mode.height - 100;
 		Gdx.graphics.setWindowedMode(vl.windowWidth, vl.windowHeight);
 	}
 
+	public void load(){
+		vl.load();
+		al.load();
+		mm = new MenuModes(al,vl);
+		gm = new GameplayModes(al,vl);
+	}
+
 	@Override
 	public void render () {
 		//called each frame, use as main loop
 		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
 		switch (vl.gameMode) {
 			case 1: //SplashLoading
 				mm.modeSplash();
