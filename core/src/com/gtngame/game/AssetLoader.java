@@ -4,22 +4,16 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.decals.GroupStrategy;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
-import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
@@ -29,22 +23,22 @@ import com.badlogic.gdx.utils.UBJsonReader;
 public class AssetLoader {
     public SpriteBatch batch;
     public Sprite splashSprite;
-    public Array<Sprite> sprites;
-    public Texture splashImg, starFieldImg, starFieldTrImg, playerShipImg, logoImg, pausedImg, victoryImg, gameoverImg, shieldImg, titleBG;
-    public TextureRegion playerShipReg, playerShipEngineReg, playerShipInvisReg, starFieldReg, starFieldTrReg, shieldReg;
+    public Texture splashImg, starFieldImg, starFieldTrImg, playerShipImg, logoImg,
+            pausedImg, victoryImg, gameoverImg, shieldImg, titleBG;
+    public TextureRegion playerShipReg, playerShipEngineReg, playerShipInvisReg,
+            starFieldReg, starFieldTrReg, shieldReg;
     public Float splashTimer;
     public VarLoader vl;
     public BitmapFont font;
+    public ParticleEffect hunParticFX, oneParticFX, fiveParticFX;
 
     //3d stuff
     public Environment env;
     public PerspectiveCamera cam;
     public CameraInputController camController;
     public ModelBatch modelBatch;
-    public Model cubeModel, planeModel, shotModel, astModel;
-    public ModelInstance cubeInstance, planeInstance, shotInstance, astInstance;
-    public Material planeMaterial;
-    //public Array<Model> models;
+    public Model cubeModel, astModel, hundredModel;
+    public ModelInstance cubeInstance, planeInstance, astInstance, hundredInstance;
     public Array<ModelInstance> modelInstances;
     public Decal floorDecal, shipDecal, enemyDecal;
     public Array<Decal> Decals;
@@ -53,11 +47,11 @@ public class AssetLoader {
     public Array<shot> shots;
     public Array<enemyShip> enmes;
     public Array<asteroid> asts;
-    public Array<AnimationController> astAnim;
+    public Array<hundred> huns;
+    public Array<ParticleEffect> FX;
     public ShapeRenderer shaRend;
     public Sound shot, nmeshot, hurt, dead, nmeoww, astoww;
     private DirectionalLight light;
-    AnimationController animControl;
 
     public AssetLoader (VarLoader vl){
         this.vl = vl;
@@ -67,7 +61,8 @@ public class AssetLoader {
         //System.out.println("1");
         enmes = new Array<enemyShip>();
         asts = new Array<asteroid>();
-        astAnim = new Array<AnimationController>();
+        huns = new Array<hundred>();
+        FX = new Array<ParticleEffect>();
         batch = new SpriteBatch();
         modelBatch = new ModelBatch();
         shaRend = new ShapeRenderer();
@@ -139,6 +134,12 @@ public class AssetLoader {
         nmeoww = Gdx.audio.newSound(Gdx.files.internal("nmeoww.wav"));
         astoww = Gdx.audio.newSound(Gdx.files.internal("astoww.wav"));
 
+        hunParticFX = new ParticleEffect();
+        hunParticFX.load(Gdx.files.internal("hunPartic.p"),Gdx.files.internal(""));
+        oneParticFX = new ParticleEffect();
+        oneParticFX.load(Gdx.files.internal("onePartic.p"),Gdx.files.internal(""));
+        fiveParticFX = new ParticleEffect();
+        fiveParticFX.load(Gdx.files.internal("fivePartic.p"),Gdx.files.internal(""));
     }
 
     public void init3D(){
@@ -196,6 +197,8 @@ public class AssetLoader {
         UBJsonReader jsonReader = new UBJsonReader();
         G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
         astModel = modelLoader.loadModel(Gdx.files.getFileHandle("asteroid.g3db", Files.FileType.Internal));
+
+        hundredModel = modelLoader.loadModel(Gdx.files.getFileHandle("hundred.g3db", Files.FileType.Internal));
         //System.out.println("ANIM: "+astModel.animations.get(0).id);
 
 //        for (int i = 0; i < astModel.animations.size; i++) {
@@ -253,6 +256,41 @@ public class AssetLoader {
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         cubeInstance = new ModelInstance(cubeModel, new Vector3(x,y,z));
         modelInstances.add(cubeInstance);
+    }
+
+    public void addHunFXAt(float x, float y, float z){
+        float partX = cam.project(new Vector3(x,y,z)).x;
+        float partY = cam.project(new Vector3(x,y,z)).y;
+        hunParticFX.getEmitters().first().setPosition(partX, partY);
+        hunParticFX.start();
+        FX.add(hunParticFX);
+    }
+
+    public void addOneFXAt(float x, float y, float z){
+        float partX = cam.project(new Vector3(x,y,z)).x;
+        float partY = cam.project(new Vector3(x,y,z)).y;
+        oneParticFX.getEmitters().first().setPosition(partX, partY);
+        oneParticFX.start();
+        FX.add(oneParticFX);
+    }
+
+    public void addFiveFXAt(float x, float y, float z){
+        float partX = cam.project(new Vector3(x,y,z)).x;
+        float partY = cam.project(new Vector3(x,y,z)).y;
+        fiveParticFX.getEmitters().first().setPosition(partX, partY);
+        fiveParticFX.start();
+        FX.add(fiveParticFX);
+    }
+
+    public void addHundredAt(hundred hun){
+        huns.add(hun);
+    }
+
+    public void addHundredInstanceAt(float x, float y, float z, float yaw){
+        hundredInstance = new ModelInstance(hundredModel, new Vector3(x,y,z));
+        //hundredInstance.transform.rotate(1, 0, 0, 90);
+        hundredInstance.transform.rotate(Vector3.Y, yaw);
+        modelInstances.add(hundredInstance);
     }
 
     public void addCircleAt(float x, float y, float z){

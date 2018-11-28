@@ -1,6 +1,5 @@
 package com.gtngame.game;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class shot extends Gameobject2D {
@@ -57,6 +56,7 @@ public class shot extends Gameobject2D {
                     else
                     {
                         playerShip.confirmKill(5);
+                        al.addFiveFXAt(nme.posX,-1.5f, nme.posZ);
                         al.nmeoww.play(0.6f);
                     }
                 }
@@ -72,6 +72,7 @@ public class shot extends Gameobject2D {
                     else
                     {
                         playerShip.confirmKill(1);
+                        al.addOneFXAt(ast.posX, ast.posY, ast.posZ);
                         al.astoww.play(0.3f);
                     }
                 }

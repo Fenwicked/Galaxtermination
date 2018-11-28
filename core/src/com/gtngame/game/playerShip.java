@@ -16,6 +16,7 @@ public class playerShip extends Gameobject2D {
         score = 0;
         shields = 2;
         animTimer = 0;
+
     }
     public void update(){
         //System.out.println(posX + " " + posZ);
@@ -38,6 +39,14 @@ public class playerShip extends Gameobject2D {
             if (getDist(myDecal, ast) < 3){
                 al.asts.removeValue(ast, true);
                 injure();
+            }
+        }
+
+        for (hundred hun : al.huns){
+            if (getDist(myDecal, hun) < 3){
+                al.huns.removeValue(hun, true);
+                al.addHunFXAt(hun.posX, hun.posY, hun.posZ);
+                confirmKill(100);
             }
         }
         super.update();
@@ -91,6 +100,11 @@ public class playerShip extends Gameobject2D {
         return (float)Math.sqrt((xDist * xDist) + (zDist * zDist));
     }
     public float getDist(Decal me, asteroid you){
+        float xDist = Math.abs(me.getX() - you.posX);
+        float zDist = Math.abs(me.getZ() - you.posZ);
+        return (float)Math.sqrt((xDist * xDist) + (zDist * zDist));
+    }
+    public float getDist(Decal me, hundred you){
         float xDist = Math.abs(me.getX() - you.posX);
         float zDist = Math.abs(me.getZ() - you.posZ);
         return (float)Math.sqrt((xDist * xDist) + (zDist * zDist));

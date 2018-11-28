@@ -3,14 +3,14 @@ package com.gtngame.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer;
 
 import java.util.Random;
 
@@ -20,6 +20,7 @@ public class GameplayModes {
     playerShip playerShip;
     enemyShip enme;
     asteroid ast;
+    hundred hun;
     Array<enemyShip> enmes;
     Array<gridSpace> grid;
     boolean win;
@@ -121,12 +122,16 @@ public class GameplayModes {
             ast.updateAst();
 
         }
+        for (hundred hun : al.huns){
+            hun.updateHun();
+
+        }
 //        for (AnimationController astAnim : al.astAnim){
 //            astAnim.update(Gdx.graphics.getDeltaTime());
 //        }
         //System.out.println(al.modelInstances.size);
         updateCam();
-
+        al.cam.project(new Vector3());
         al.modelBatch.begin(al.cam);
         al.modelBatch.render(al.modelInstances, al.env);
         al.modelBatch.end();
@@ -135,6 +140,13 @@ public class GameplayModes {
         }
         al.decalBatch.flush();
         al.batch.begin();
+        for (ParticleEffect FX : al.FX){
+            FX.update(Gdx.graphics.getDeltaTime());
+            FX.draw(al.batch);
+            if (FX.isComplete()) {
+                al.FX.removeValue(FX, true);
+            }
+        }
         if (vl.debugMode) al.font.draw(al.batch, "GAMEPLAY",100,vl.windowHeight - 100);
 
         /*
@@ -179,6 +191,7 @@ public class GameplayModes {
             pauseTimer = 0;
             r = new Random();
             whichToWrite = r.nextInt(21);
+            vl.finalScore = playerShip.score;
             vl.gameMode = vl.gameModeMap.get("GameOver");
         }
         if (playerShip.shields <= -1) {
@@ -186,16 +199,29 @@ public class GameplayModes {
             pauseTimer = 0;
             r = new Random();
             whichToWrite = r.nextInt(21);
+            vl.finalScore = playerShip.score;
             vl.gameMode = vl.gameModeMap.get("GameOver");
         }
     }
-
+    public float getCameraCurrentXYAngle(PerspectiveCamera cam)
+    {
+        return (float)Math.atan2(cam.direction.x, cam.direction.z)* MathUtils.radiansToDegrees;
+    }
     public void updateCam(){
-        Vector2 motionVec = new Vector2(4f, 0).rotate(-(float)playerShip.yaw - playerShip.yawSpeed);
+        Vector2 motionVec = new Vector2(4f, 0f).rotate(-(float)playerShip.yaw);
         al.cam.position.x = playerShip.posX + motionVec.x;
         al.cam.position.z = playerShip.posZ + motionVec.y;
-        al.cam.lookAt(new Vector3(playerShip.posX - motionVec.x * 3,0, playerShip.posZ - motionVec.y * 3));
-        al.cam.up.set(al.cam.position.x, 15000, al.cam.position.z);
+        float camAngle = -getCameraCurrentXYAngle(al.cam) + 180f;
+        al.cam.rotate(new Vector3(0f,1f,0f),(float)(camAngle+playerShip.yaw+playerShip.yawSpeed)+90f);
+
+        //        Vector3 priorRot = al.cam.direction;
+//        al.cam.direction.set
+        //al.cam.lookAt(new Vector3(playerShip.posX - motionVec.x * 3,-1.9f, playerShip.posZ - motionVec.y * 3));
+//        //al.cam.direction.set(priorDir.x, al.cam.direction.y, priorDir.z);
+//        //al.cam.direction.set(al.cam.position.x - playerShip.posX, al.cam.direction.y, al.cam.position.z - playerShip.posZ);
+////        al.cam.up.set(alreadyUp);
+//        //al.cam.up.set(playerShip.posX, al.cam.position.y + 1000, playerShip.posZ);
+//        al.cam.up.set(al.cam.position.x, 15000, al.cam.position.z);
 
         al.cam.update();
     }
@@ -224,6 +250,7 @@ public class GameplayModes {
     }
 
     public void makeGrid(int xRows, int zCols, float gridX, float gridZ){
+        hun = new hundred(0,5, al);
         int cntEnemies = 0;
         int offsetX = gridSpacesPerSide * gridSpaceSize / 2, offsetZ = gridSpacesPerSide * gridSpaceSize / 2;
         r = new Random();
@@ -251,6 +278,8 @@ public class GameplayModes {
             if (r.nextBoolean() && gs.hasSomething == false) {
                 gs.setAst();
                 float randOffset = r.nextInt(15) - 15;
+                if (randOffset >= 0 && randOffset <= 1) randOffset += 1;
+                if (randOffset < 0 && randOffset >= -1) randOffset -= 1;
                 ast = new asteroid((gs.col * gs.xDim - offsetX + randOffset),(gs.row * gs.zDim - offsetZ + randOffset), al);
                 ast = new asteroid((gs.col * gs.xDim - offsetX - randOffset),(gs.row * gs.zDim - offsetZ + randOffset), al);
                 ast = new asteroid((gs.col * gs.xDim - offsetX - randOffset),(gs.row * gs.zDim - offsetZ - randOffset), al);
@@ -371,8 +400,12 @@ public class GameplayModes {
             if (textTimer >= 2 ) textTimer = 2;
             float lettersInEnterText = textTimer / 0.08f;
             if (lettersInEnterText >= 23) lettersInEnterText = 23;
-
+            float lettersInScoreText = textTimer / 0.08f;
+            String scoreString = "FINAL SCORE: " + vl.finalScore;
+            if (lettersInScoreText >= scoreString.length()) lettersInScoreText = scoreString.length();
+            String scoreToWrite = scoreString.substring(0, (int) lettersInScoreText);
             String enterText = "PRESS ENTER TO CONTINUE".substring(0, (int) lettersInEnterText);
+            al.font.draw(al.batch, scoreToWrite, (vl.windowWidth / 2) + 100, 135);
             al.font.draw(al.batch, enterText, (vl.windowWidth / 2) + 100, 100);
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                 pauseTimer = 0;
