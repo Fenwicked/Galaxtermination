@@ -140,11 +140,12 @@ public class GameplayModes {
         }
         al.decalBatch.flush();
         al.batch.begin();
-        for (ParticleEffect FX : al.FX){
+        for (PartFX FX : al.PFXs){
             FX.update(Gdx.graphics.getDeltaTime());
+            FX.updatePos();
             FX.draw(al.batch);
             if (FX.isComplete()) {
-                al.FX.removeValue(FX, true);
+                al.PFXs.removeValue(FX, true);
             }
         }
         if (vl.debugMode) al.font.draw(al.batch, "GAMEPLAY",100,vl.windowHeight - 100);
@@ -250,7 +251,7 @@ public class GameplayModes {
     }
 
     public void makeGrid(int xRows, int zCols, float gridX, float gridZ){
-        hun = new hundred(0,5, al);
+        //hun = new hundred(0,5, al);
         int cntEnemies = 0;
         int offsetX = gridSpacesPerSide * gridSpaceSize / 2, offsetZ = gridSpacesPerSide * gridSpaceSize / 2;
         r = new Random();
@@ -284,6 +285,9 @@ public class GameplayModes {
                 ast = new asteroid((gs.col * gs.xDim - offsetX - randOffset),(gs.row * gs.zDim - offsetZ + randOffset), al);
                 ast = new asteroid((gs.col * gs.xDim - offsetX - randOffset),(gs.row * gs.zDim - offsetZ - randOffset), al);
             }
+        }
+        for (int astI = 0; astI < 200; astI ++){
+            ast = new asteroid(astI + 5,0, al);
         }
         //System.out.println(cntEnemies);
     }

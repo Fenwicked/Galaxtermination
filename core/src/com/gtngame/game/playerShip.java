@@ -47,6 +47,7 @@ public class playerShip extends Gameobject2D {
                 al.huns.removeValue(hun, true);
                 al.addHunFXAt(hun.posX, hun.posY, hun.posZ);
                 confirmKill(100);
+                al.hundget.play(0.3f);
             }
         }
         super.update();

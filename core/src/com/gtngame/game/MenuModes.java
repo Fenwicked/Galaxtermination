@@ -9,13 +9,14 @@ public class MenuModes {
     AssetLoader al;
     VarLoader vl;
     float mmWait;
-    float lettersInEnterText;
+    float lettersInEnterText, lettersInCreditsText;
 
     public MenuModes(AssetLoader al, VarLoader vl){
         this.al = al;
         this.vl = vl;
         //mmWait = 0;
         lettersInEnterText = 0;
+        lettersInCreditsText = 0;
     }
 
     public void modeSplash () {
@@ -60,10 +61,35 @@ public class MenuModes {
 //            }, 1);
 //        }
 
+        Gdx.gl.glClearColor(0.03f, 0.03f, 0.08f, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
         al.batch.begin();
-        if (vl.debugMode) al.font.draw(al.batch, "CREDITS",100,vl.windowHeight - 100);
-        //al.batch.draw(al.dbgCredits,10,10);
+        al.batch.draw(al.titleBG,0f, 0f, vl.windowWidth, vl.windowHeight);
+        float logoWidth = al.logoImg.getWidth() * 0.8f;
+        float logoHeight = al.logoImg.getHeight() * 0.8f;
+        al.batch.draw(al.logoImg,(vl.windowWidth /2) - (logoWidth/2), ((vl.windowHeight /2) - (logoHeight/2)) + 100, logoWidth, logoHeight);
+        al.font.draw(al.batch, "ALL WORK BY MATT FENWICK",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 110);
+        al.font.draw(al.batch, "CREATED USING LIBGDX, INTELLIJ IDEA, AND GRADLE",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 75);
+        al.font.draw(al.batch, "SOUND EFFECTS CREATED IN SFXR",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 40);
+        al.font.draw(al.batch, "3D MODELING IN BLENDER",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 5);
+        al.font.draw(al.batch, "SUBMISSION FOR ",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) - 30);
+
+        if (mmWait < 2){
+            mmWait += Gdx.graphics.getDeltaTime();
+        }
+        else
+        {
+            mmWait += Gdx.graphics.getDeltaTime();
+            al.font.draw(al.batch, "PRESS ENTER TO RETURN TO TITLE",(vl.windowWidth /2) - (logoWidth/2),100);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                mmWait = 0;
+                vl.gameMode = vl.gameModeMap.get("MainMenu");
+            }
+        }
+        //al.batch.draw(al.dbgMM,10,10);
         al.batch.end();
+        if (vl.debugMode) al.font.draw(al.batch, "CREDITS",100,vl.windowHeight - 100);
     }
 
     public void modeMainMenu () {
@@ -90,20 +116,31 @@ public class MenuModes {
         al.font.draw(al.batch, "WASD OR ARROWS TO MOVE",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 110);
         al.font.draw(al.batch, "SPACE TO SHOOT",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 75);
         al.font.draw(al.batch, "ENTER TO PAUSE",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 40);
+
+
         if (mmWait < 2){
             mmWait += Gdx.graphics.getDeltaTime();
         }
         else
         {
             mmWait += Gdx.graphics.getDeltaTime();
-            if (mmWait > 3) mmWait = 3;
+            if (mmWait > 4) mmWait = 4;
             lettersInEnterText = (mmWait - 2) / 0.05f;
+            if (lettersInEnterText > 20) lettersInEnterText = 20;
+            lettersInCreditsText = (mmWait - 2) / 0.05f;
+            if (lettersInCreditsText > 21) lettersInCreditsText = 21;
             //System.out.println(lettersInEnterText);
             String toDraw = "PRESS ENTER TO START".substring(0,(int)lettersInEnterText);
+            String toDrawCreds = "PRESS 'C' FOR CREDITS".substring(0,(int)lettersInCreditsText);
             al.font.draw(al.batch, toDraw,(vl.windowWidth / 2) + 100, 100);
+            al.font.draw(al.batch, toDrawCreds,(vl.windowWidth /2) - (logoWidth/2),100);
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                 mmWait = 0;
                 vl.gameMode = vl.gameModeMap.get("Gameplay");
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+                mmWait = 0;
+                vl.gameMode = vl.gameModeMap.get("Credits");
             }
         }
         if (vl.debugMode) al.font.draw(al.batch, "MAIN MENU",100,vl.windowHeight - 100);

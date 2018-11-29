@@ -60,10 +60,10 @@ scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
 - X Scale - 
-lowMin: 16.0
-lowMax: 16.0
-highMin: 16.0
-highMax: 16.0
+lowMin: 8.0
+lowMax: 8.0
+highMin: 8.0
+highMax: 8.0
 relative: false
 scalingCount: 1
 scaling0: 1.0

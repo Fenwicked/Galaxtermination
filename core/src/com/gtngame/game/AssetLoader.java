@@ -30,7 +30,8 @@ public class AssetLoader {
     public Float splashTimer;
     public VarLoader vl;
     public BitmapFont font;
-    public ParticleEffect hunParticFX, oneParticFX, fiveParticFX;
+    public PartFX hunParticFX, oneParticFX, fiveParticFX;
+    public Array<PartFX> PFXs;
 
     //3d stuff
     public Environment env;
@@ -48,9 +49,8 @@ public class AssetLoader {
     public Array<enemyShip> enmes;
     public Array<asteroid> asts;
     public Array<hundred> huns;
-    public Array<ParticleEffect> FX;
     public ShapeRenderer shaRend;
-    public Sound shot, nmeshot, hurt, dead, nmeoww, astoww;
+    public Sound shot, nmeshot, hurt, dead, nmeoww, astoww, astowwhund, hundget;
     private DirectionalLight light;
 
     public AssetLoader (VarLoader vl){
@@ -62,7 +62,7 @@ public class AssetLoader {
         enmes = new Array<enemyShip>();
         asts = new Array<asteroid>();
         huns = new Array<hundred>();
-        FX = new Array<ParticleEffect>();
+        PFXs = new Array<PartFX>();
         batch = new SpriteBatch();
         modelBatch = new ModelBatch();
         shaRend = new ShapeRenderer();
@@ -133,13 +133,16 @@ public class AssetLoader {
         dead = Gdx.audio.newSound(Gdx.files.internal("dead.wav"));
         nmeoww = Gdx.audio.newSound(Gdx.files.internal("nmeoww.wav"));
         astoww = Gdx.audio.newSound(Gdx.files.internal("astoww.wav"));
+        astowwhund = Gdx.audio.newSound(Gdx.files.internal("astowwhund.wav"));
+        hundget = Gdx.audio.newSound(Gdx.files.internal("hundget.wav"));
 
-        hunParticFX = new ParticleEffect();
+        hunParticFX = new PartFX(this);
         hunParticFX.load(Gdx.files.internal("hunPartic.p"),Gdx.files.internal(""));
-        oneParticFX = new ParticleEffect();
+        oneParticFX = new PartFX(this);
         oneParticFX.load(Gdx.files.internal("onePartic.p"),Gdx.files.internal(""));
-        fiveParticFX = new ParticleEffect();
+        fiveParticFX = new PartFX(this);
         fiveParticFX.load(Gdx.files.internal("fivePartic.p"),Gdx.files.internal(""));
+
     }
 
     public void init3D(){
@@ -259,27 +262,24 @@ public class AssetLoader {
     }
 
     public void addHunFXAt(float x, float y, float z){
-        float partX = cam.project(new Vector3(x,y,z)).x;
-        float partY = cam.project(new Vector3(x,y,z)).y;
-        hunParticFX.getEmitters().first().setPosition(partX, partY);
+        hunParticFX.SetWorldPos(x,y,z);
+        hunParticFX.updatePos();
         hunParticFX.start();
-        FX.add(hunParticFX);
+        PFXs.add(hunParticFX);
     }
 
     public void addOneFXAt(float x, float y, float z){
-        float partX = cam.project(new Vector3(x,y,z)).x;
-        float partY = cam.project(new Vector3(x,y,z)).y;
-        oneParticFX.getEmitters().first().setPosition(partX, partY);
+        oneParticFX.SetWorldPos(x,y,z);
+        oneParticFX.updatePos();
         oneParticFX.start();
-        FX.add(oneParticFX);
+        PFXs.add(oneParticFX);
     }
 
     public void addFiveFXAt(float x, float y, float z){
-        float partX = cam.project(new Vector3(x,y,z)).x;
-        float partY = cam.project(new Vector3(x,y,z)).y;
-        fiveParticFX.getEmitters().first().setPosition(partX, partY);
+        fiveParticFX.SetWorldPos(x,y,z);
+        fiveParticFX.updatePos();
         fiveParticFX.start();
-        FX.add(fiveParticFX);
+        PFXs.add(fiveParticFX);
     }
 
     public void addHundredAt(hundred hun){
