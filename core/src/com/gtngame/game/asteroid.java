@@ -1,8 +1,6 @@
 package com.gtngame.game;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 

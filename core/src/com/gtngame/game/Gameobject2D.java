@@ -3,6 +3,7 @@ package com.gtngame.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Gameobject2D {
@@ -10,7 +11,7 @@ public class Gameobject2D {
     public float posZ, posX;
     public float motionX, motionZ;
     public float motionForward, motionLateral;
-    public double yaw;
+    public float yaw;
     public float yawSpeed;
     public String textureFile;
     public Texture texture;
@@ -24,7 +25,7 @@ public class Gameobject2D {
     public final float accelRate = 0.09f;
     private final float maxX = 0.9f;
     private final float maxZ = 0.9f;
-    private final float maxForward = 0.9f;
+    private final float maxForward = 0.7f;
     private final float maxLateral = 0.9f;
     private final float maxYawSpeed = 2.5f;
     public AssetLoader al;
@@ -39,14 +40,14 @@ public class Gameobject2D {
         this.yaw += this.yawSpeed;
     }
 
-    final public void accelYaw(Float yawAccel) { this.yawSpeed += yawAccel * 1.5;}
+    final public void accelYaw(Float yawAccel) { this.yawSpeed += yawAccel * 1.5f;}
     //final public void accelLateral(Float zMO) { this.motionLateral += zMO; }
     final public void accelForward(Float xMO){
-        //this.motionX += Math.sin(this.yaw) * xMO;
-        //this.motionZ += Math.cos(this.yaw) * xMO;
-        motionVec = new Vector2(xMO, 0).rotate((float)yaw);
-        this.motionX += motionVec.x;
-        this.motionZ -= motionVec.y;
+        //motionVec = new Vector2(xMO, 0).rotate(yaw);
+        //this.motionX += motionVec.x;
+        //this.motionZ -= motionVec.y;
+        this.motionX += xMO * MathUtils.cosDeg(yaw);
+        this.motionZ -= xMO * MathUtils.sinDeg(yaw);
     }
     final public void moveZ(){
         this.posZ += (int)this.motionZ;
@@ -62,23 +63,27 @@ public class Gameobject2D {
     public void update(){
         posX += motionX;
         if (posX > 1500){
-            motionX = -motionX;
-            posX -= 2;
+            //motionX = -motionX;
+            //posX -= 2;
+            posX -= 3000;
         }
         else if (posX < -1500){
-            motionX = -motionX;
-            posX += 2;
+            //motionX = -motionX;
+            //posX += 2;
+            posX += 3000;
         }
         posZ += motionZ;
         if (posZ > 1500){
-            motionZ = -motionZ;
-            posZ -= 2;
+            //motionZ = -motionZ;
+            //posZ -= 2;
+            posZ -= 3000;
         }
         else if (posZ < -1500){
-            motionZ = -motionZ;
-            posZ += 2;
+            //motionZ = -motionZ;
+            //posZ += 2;
+            posZ += 3000;
         }
-        if (posZ > 1500 || posZ < -1500) motionZ = -motionZ;
+        //if (posZ > 1500 || posZ < -1500) motionZ = -motionZ;
         if (motionX > 0) {
             motionX -= motionDecay * (Math.abs(motionX) / (Math.abs(motionX) + Math.abs(motionZ)));
         }
@@ -147,6 +152,6 @@ public class Gameobject2D {
     }
     public void refresh(){
         myDecal.setPosition(posX,myDecal.getY(), posZ);
-        myDecal.setRotation((float)yaw,90,90);
+        myDecal.setRotation(yaw,90,90);
     }
 }

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g3d.decals.Decal;
 
 public class Gameobject3D extends Gameobject2D{
     public int sizeY;
-    public int posY;
+    public float posY;
     public float motionY;
     public float pitch, roll;
     public float pitchSpeed, rollSpeed;

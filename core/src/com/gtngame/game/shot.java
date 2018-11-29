@@ -1,13 +1,17 @@
 package com.gtngame.game;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Random;
 
 public class shot extends Gameobject2D {
     AssetLoader al;
     float totalDist, targetX, targetZ, initX, initZ, shotSpeed, targetRemoveRadius;
     boolean isEnemy;
     playerShip playerShip;
+    Random r;
+    hundred hun;
+
     public shot (float startX, float startZ, float totalDist, float startYaw, AssetLoader al, float initX, float initZ, boolean isEnemy, playerShip playerShip){
         this.al = al;
         this.posX = startX;
@@ -18,6 +22,7 @@ public class shot extends Gameobject2D {
         this.initZ = initZ;
         this.isEnemy = isEnemy;
         this.playerShip = playerShip;
+        r = new Random();
         shotSpeed = 2f;
         targetRemoveRadius = 0.7f;
         getTarget();
@@ -57,6 +62,7 @@ public class shot extends Gameobject2D {
                     else
                     {
                         playerShip.confirmKill(5);
+                        al.addFiveFXAt(nme.posX,-1.5f, nme.posZ);
                         al.nmeoww.play(0.6f);
                     }
                 }
@@ -71,8 +77,17 @@ public class shot extends Gameobject2D {
                     }
                     else
                     {
-                        playerShip.confirmKill(1);
-                        al.astoww.play(0.3f);
+                        int randomR = r.nextInt(100);
+                        //System.out.println(randomR);
+                        if (randomR <= 2){
+                            hun = new hundred(ast.posX,ast.posZ, al);
+                            al.astowwhund.play(0.3f);
+                        }
+                        else {
+                            playerShip.confirmKill(1);
+                            al.addOneFXAt(ast.posX, ast.posY, ast.posZ);
+                            al.astoww.play(0.3f);
+                        }
                     }
                 }
             }

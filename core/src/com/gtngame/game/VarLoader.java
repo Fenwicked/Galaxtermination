@@ -14,8 +14,10 @@ public class VarLoader {
     public Integer windowWidth, windowHeight;
     public Array<String> victoryText;
     public Array<String> gameOverText;
+    public Integer finalScore;
 
     public void load () {
+        finalScore = 0;
         gameModeMap = new HashMap<String, Integer>();
         Graphics.DisplayMode mode = Gdx.graphics.getDisplayMode();
         windowWidth = mode.width - 100;
