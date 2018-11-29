@@ -70,10 +70,10 @@ public class MenuModes {
         float logoHeight = al.logoImg.getHeight() * 0.8f;
         al.batch.draw(al.logoImg,(vl.windowWidth /2) - (logoWidth/2), ((vl.windowHeight /2) - (logoHeight/2)) + 100, logoWidth, logoHeight);
         al.font.draw(al.batch, "ALL WORK BY MATT FENWICK",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 110);
-        al.font.draw(al.batch, "CREATED USING LIBGDX, INTELLIJ IDEA, AND GRADLE",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 75);
+        al.font.draw(al.batch, "CREATED IN JAVA USING LIBGDX, INTELLIJ IDEA, AND GRADLE",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 75);
         al.font.draw(al.batch, "SOUND EFFECTS CREATED IN SFXR",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 40);
         al.font.draw(al.batch, "3D MODELING IN BLENDER",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) + 5);
-        al.font.draw(al.batch, "SUBMISSION FOR ",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) - 30);
+        al.font.draw(al.batch, "SUBMISSION FOR ITCH.IO GAME JAM 2018",(vl.windowWidth /2) - (logoWidth/2),((vl.windowHeight /2) - (logoHeight/2)) - 30);
 
         if (mmWait < 2){
             mmWait += Gdx.graphics.getDeltaTime();

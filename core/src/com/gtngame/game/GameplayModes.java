@@ -286,9 +286,9 @@ public class GameplayModes {
                 ast = new asteroid((gs.col * gs.xDim - offsetX - randOffset),(gs.row * gs.zDim - offsetZ - randOffset), al);
             }
         }
-        for (int astI = 0; astI < 200; astI ++){
-            ast = new asteroid(astI + 5,0, al);
-        }
+//        for (int astI = 0; astI < 200; astI ++){
+//            ast = new asteroid(astI + 5,0, al);
+//        }
         //System.out.println(cntEnemies);
     }
     public void gameplayCleanup(){
